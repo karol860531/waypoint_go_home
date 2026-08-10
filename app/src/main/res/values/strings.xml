@@ -1,0 +1,31 @@
+<resources>
+    <string name="app_name">Waypoint Go Home</string>
+
+    <string name="btn_mark_position">Zaznacz pozycję</string>
+    <string name="btn_add_waypoint">Dodaj waypoint</string>
+    <string name="btn_record_start">Nagrywaj trasę</string>
+    <string name="btn_record_stop">Zatrzymaj nagrywanie</string>
+    <string name="btn_return">Prowadź z powrotem</string>
+    <string name="btn_cancel_return">Anuluj powrót</string>
+    <string name="btn_new_trip">Nowa trasa</string>
+
+    <string name="notification_channel_name">Śledzenie trasy</string>
+    <string name="notification_title">Waypoint Go Home</string>
+    <string name="notification_text">Nagrywanie trasy w toku…</string>
+
+    <string name="msg_location_unavailable">Nie udało się pobrać lokalizacji</string>
+    <string name="msg_permission_required">Aplikacja potrzebuje dostępu do lokalizacji</string>
+    <string name="msg_background_permission_rationale">Aby rysować trasę również przy zablokowanym ekranie, zezwól na dostęp do lokalizacji "Zawsze" na następnym ekranie</string>
+    <string name="msg_no_waypoints">Brak zapisanych waypointów — najpierw zaznacz pozycję i dodaj punkty</string>
+    <string name="msg_arrived">Dotarłeś do celu</string>
+    <string name="msg_target_set">Ustawiono jako cel powrotu</string>
+
+    <string name="label_start">Start</string>
+    <string name="label_waypoint">Waypoint %1$d</string>
+    <string name="label_target_prefix">Cel: %1$s</string>
+    <string name="label_distance_m">%1$d m</string>
+    <string name="label_distance_km">%1$.1f km</string>
+
+    <string name="menu_set_as_target">Ustaw jako cel powrotu</string>
+    <string name="menu_cancel">Anuluj</string>
+</resources>

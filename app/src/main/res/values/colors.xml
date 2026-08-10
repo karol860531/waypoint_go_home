@@ -1,0 +1,11 @@
+<resources>
+    <color name="purple_700">#3F51B5</color>
+    <color name="purple_500">#5C6BC0</color>
+    <color name="teal_700">#00796B</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="track_line">#FF3F51B5</color>
+    <color name="marker_start">#FF2E7D32</color>
+    <color name="marker_waypoint">#FFF57C00</color>
+    <color name="panel_bg">#EE212121</color>
+</resources>

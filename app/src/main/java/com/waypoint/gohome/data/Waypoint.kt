@@ -6,8 +6,10 @@ package com.waypoint.gohome.data
  */
 data class Waypoint(
     val id: Long,
+    val tripId: Long,
     val latitude: Double,
     val longitude: Double,
+    val altitude: Double?,
     val sequence: Int,
     val isStart: Boolean,
     val timestamp: Long

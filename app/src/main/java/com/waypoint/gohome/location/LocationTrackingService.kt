@@ -3,7 +3,9 @@ package com.waypoint.gohome.location
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import androidx.core.app.NotificationCompat
@@ -23,7 +25,8 @@ import kotlinx.coroutines.launch
 /**
  * Foreground service that keeps requesting location updates and persists each fix as a
  * [com.waypoint.gohome.data.TrackPoint] so the travelled route can be drawn live on the map,
- * even while the app is backgrounded or the screen is locked.
+ * even while the app is backgrounded or the screen is locked. When "auto waypoint" is enabled in
+ * preferences, it also drops a regular waypoint every N meters of travel.
  */
 class LocationTrackingService : Service() {
 
@@ -31,12 +34,34 @@ class LocationTrackingService : Service() {
     private lateinit var repository: TripRepository
     private val serviceScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
+    private var lastAutoWaypointLocation: Location? = null
+
     private val locationCallback = object : LocationCallback() {
         override fun onLocationResult(result: LocationResult) {
             val location = result.lastLocation ?: return
+            val altitude = if (location.hasAltitude()) location.altitude else null
             serviceScope.launch {
-                repository.addTrackPoint(location.latitude, location.longitude)
+                repository.addTrackPoint(location.latitude, location.longitude, altitude)
+                maybeAddAutoWaypoint(location, altitude)
             }
+        }
+    }
+
+    private suspend fun maybeAddAutoWaypoint(location: Location, altitude: Double?) {
+        val prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        if (!prefs.getBoolean(KEY_AUTO_WAYPOINT_ENABLED, false)) {
+            lastAutoWaypointLocation = null
+            return
+        }
+        val thresholdMeters = prefs.getFloat(KEY_AUTO_WAYPOINT_DISTANCE, DEFAULT_AUTO_WAYPOINT_DISTANCE)
+        val last = lastAutoWaypointLocation
+        if (last == null) {
+            lastAutoWaypointLocation = location
+            return
+        }
+        if (last.distanceTo(location) >= thresholdMeters) {
+            repository.addWaypoint(location.latitude, location.longitude, altitude)
+            lastAutoWaypointLocation = location
         }
     }
 
@@ -97,5 +122,10 @@ class LocationTrackingService : Service() {
         private const val UPDATE_INTERVAL_MS = 5000L
         private const val MIN_UPDATE_INTERVAL_MS = 3000L
         private const val MIN_UPDATE_DISTANCE_M = 5f
+
+        const val PREFS_NAME = "waypoint_prefs"
+        const val KEY_AUTO_WAYPOINT_ENABLED = "auto_waypoint_enabled"
+        const val KEY_AUTO_WAYPOINT_DISTANCE = "auto_waypoint_distance_m"
+        const val DEFAULT_AUTO_WAYPOINT_DISTANCE = 500f
     }
 }

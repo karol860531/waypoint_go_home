@@ -27,5 +27,45 @@
     <string name="label_distance_km">%1$.1f km</string>
 
     <string name="menu_set_as_target">Ustaw jako cel powrotu</string>
+    <string name="menu_delete_waypoint">Usuń waypoint</string>
     <string name="menu_cancel">Anuluj</string>
+
+    <string name="menu_trip_history">Historia tras</string>
+    <string name="menu_export_gpx">Eksportuj GPX</string>
+    <string name="menu_import_gpx">Importuj GPX</string>
+    <string name="menu_offline_map">Pobierz mapę offline</string>
+    <string name="menu_elevation_profile">Profil wysokości</string>
+    <string name="menu_auto_waypoint">Auto-waypoint</string>
+
+    <string name="dialog_auto_waypoint_title">Automatyczne waypointy</string>
+    <string name="dialog_auto_waypoint_distance_hint">Dystans w metrach</string>
+    <string name="msg_auto_waypoint_enabled">Auto-waypoint włączony (co %1$d m)</string>
+    <string name="msg_auto_waypoint_disabled">Auto-waypoint wyłączony</string>
+
+    <string name="title_trip_history">Historia tras</string>
+    <string name="trip_item_points">%1$d punktów • %2$s</string>
+    <string name="action_delete_trip">Usuń trasę</string>
+    <string name="confirm_delete_trip">Usunąć tę trasę? Tej operacji nie można cofnąć.</string>
+    <string name="btn_delete">Usuń</string>
+    <string name="msg_no_trips">Brak zapisanych tras</string>
+
+    <string name="msg_gpx_exported">Wyeksportowano GPX</string>
+    <string name="msg_gpx_export_failed">Nie udało się wyeksportować GPX</string>
+    <string name="msg_gpx_imported">Zaimportowano trasę z GPX</string>
+    <string name="msg_gpx_import_failed">Nie udało się zaimportować pliku GPX</string>
+
+    <string name="msg_offline_download_started">Pobieranie kafelków mapy…</string>
+    <string name="msg_offline_download_done">Pobrano mapę offline dla widocznego obszaru</string>
+    <string name="msg_offline_download_failed">Nie udało się pobrać mapy offline</string>
+
+    <string name="title_elevation_profile">Profil wysokości</string>
+    <string name="msg_no_altitude_data">Brak danych o wysokości dla tej trasy</string>
+
+    <string name="dialog_battery_title">Optymalizacja baterii</string>
+    <string name="dialog_battery_message">Aby nagrywanie trasy działało niezawodnie w tle (np. przy zablokowanym ekranie), wyłącz optymalizację baterii dla tej aplikacji.</string>
+    <string name="btn_open_settings">Otwórz ustawienia</string>
+    <string name="btn_skip">Pomiń</string>
+
+    <string name="label_routing_toggle">Trasa po drogach</string>
+    <string name="msg_routing_unavailable">Nie udało się pobrać trasy po drogach (wymaga internetu)</string>
 </resources>

@@ -7,5 +7,6 @@
     <color name="track_line">#FF3F51B5</color>
     <color name="marker_start">#FF2E7D32</color>
     <color name="marker_waypoint">#FFF57C00</color>
+    <color name="marker_target">#FFC62828</color>
     <color name="panel_bg">#EE212121</color>
 </resources>

@@ -5,4 +5,22 @@
         android:id="@+id/action_new_trip"
         android:title="@string/btn_new_trip"
         app:showAsAction="always|withText" />
+    <item
+        android:id="@+id/action_trip_history"
+        android:title="@string/menu_trip_history" />
+    <item
+        android:id="@+id/action_export_gpx"
+        android:title="@string/menu_export_gpx" />
+    <item
+        android:id="@+id/action_import_gpx"
+        android:title="@string/menu_import_gpx" />
+    <item
+        android:id="@+id/action_offline_map"
+        android:title="@string/menu_offline_map" />
+    <item
+        android:id="@+id/action_elevation_profile"
+        android:title="@string/menu_elevation_profile" />
+    <item
+        android:id="@+id/action_auto_waypoint"
+        android:title="@string/menu_auto_waypoint" />
 </menu>

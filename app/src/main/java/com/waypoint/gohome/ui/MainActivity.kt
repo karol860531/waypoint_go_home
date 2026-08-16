@@ -1,6 +1,7 @@
 package com.waypoint.gohome.ui
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -26,6 +27,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -46,6 +48,10 @@ import com.waypoint.gohome.history.TripHistoryActivity
 import com.waypoint.gohome.location.CompassSensor
 import com.waypoint.gohome.location.LocationTrackingService
 import com.waypoint.gohome.location.RoutingClient
+import com.waypoint.gohome.location.RoutingResult
+import com.waypoint.gohome.sun.SunInfoActivity
+import java.io.File
+import java.io.FileOutputStream
 import java.text.SimpleDateFormat
 import java.util.Locale
 import kotlin.math.roundToInt
@@ -187,10 +193,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.btnReturn.setOnClickListener {
-            if (viewModel.waypoints.value.isEmpty()) {
-                toast(getString(R.string.msg_no_waypoints))
-            } else {
-                viewModel.enterReturnMode(targetWaypointId = null)
+            when {
+                viewModel.returnMode.value -> viewModel.cancelReturn()
+                viewModel.waypoints.value.isEmpty() -> toast(getString(R.string.msg_no_waypoints))
+                else -> showReturnModeDialog()
             }
         }
 
@@ -200,6 +206,10 @@ class MainActivity : AppCompatActivity() {
 
         binding.checkRoadRouting.setOnCheckedChangeListener { _, checked ->
             if (checked) refreshRoadRoute() else clearRoadRoute()
+        }
+
+        binding.btnLocateMe.setOnClickListener {
+            withCurrentLocation { location -> centerMap(location) }
         }
     }
 
@@ -253,6 +263,38 @@ class MainActivity : AppCompatActivity() {
             binding.mapView.overlays.add(marker)
         }
         binding.mapView.invalidate()
+    }
+
+    private fun showReturnModeDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.btn_return)
+            .setItems(
+                arrayOf(
+                    getString(R.string.menu_return_via_waypoints),
+                    getString(R.string.menu_return_direct_to_start),
+                    getString(R.string.menu_return_choose_target)
+                )
+            ) { _, which ->
+                when (which) {
+                    0 -> viewModel.enterReturnMode(targetWaypointId = null, direct = false)
+                    1 -> viewModel.enterReturnMode(targetWaypointId = null, direct = true)
+                    2 -> showChooseTargetDialog()
+                }
+            }
+            .show()
+    }
+
+    private fun showChooseTargetDialog() {
+        val sortedWaypoints = viewModel.waypoints.value.sortedBy { it.sequence }
+        val labels = sortedWaypoints.map {
+            if (it.isStart) getString(R.string.label_start) else getString(R.string.label_waypoint, it.sequence)
+        }.toTypedArray()
+        AlertDialog.Builder(this)
+            .setTitle(R.string.title_choose_target)
+            .setItems(labels) { _, which ->
+                viewModel.enterReturnMode(targetWaypointId = sortedWaypoints[which].id)
+            }
+            .show()
     }
 
     private fun showWaypointDialog(waypoint: Waypoint) {
@@ -324,12 +366,22 @@ class MainActivity : AppCompatActivity() {
         val target = route.getOrNull(index) ?: return
         val location = lastLocation ?: return
         lifecycleScope.launch {
-            val points = RoutingClient.fetchRoute(location.latitude, location.longitude, target.latitude, target.longitude)
-            if (points == null) {
-                toast(getString(R.string.msg_routing_unavailable))
-                routePolyline.setPoints(emptyList())
-            } else {
-                routePolyline.setPoints(points.map { GeoPoint(it.latitude, it.longitude) })
+            when (val result = RoutingClient.fetchRoute(location.latitude, location.longitude, target.latitude, target.longitude)) {
+                is RoutingResult.Success -> {
+                    routePolyline.setPoints(result.points.map { GeoPoint(it.latitude, it.longitude) })
+                }
+                is RoutingResult.Failure -> {
+                    toast(
+                        getString(
+                            when (result.reason) {
+                                "no_connection" -> R.string.msg_routing_no_connection
+                                "no_route" -> R.string.msg_routing_no_route
+                                else -> R.string.msg_routing_server_error
+                            }
+                        )
+                    )
+                    routePolyline.setPoints(emptyList())
+                }
             }
             binding.mapView.invalidate()
         }
@@ -576,6 +628,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun downloadOfflineMap() {
+        // The free OSM Mapnik tile source explicitly forbids bulk downloads (TileSourcePolicy.FLAG_NO_BULK)
+        // to protect the shared server. osmdroid enforces this by throwing on a background thread, which
+        // would otherwise crash the app with no chance to catch it — so we check first instead of calling in.
+        if (!TileSourceFactory.MAPNIK.tileSourcePolicy.acceptsBulkDownload()) {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.title_offline_map_unavailable)
+                .setMessage(R.string.msg_offline_bulk_not_allowed)
+                .setPositiveButton(android.R.string.ok, null)
+                .show()
+            return
+        }
+
         toast(getString(R.string.msg_offline_download_started))
         val cacheManager = CacheManager(binding.mapView)
         val boundingBox = binding.mapView.boundingBox
@@ -595,6 +659,44 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread { toast(getString(R.string.msg_offline_download_failed)) }
             }
         })
+    }
+
+    private fun showCurrentPositionDialog() {
+        val location = lastLocation
+        if (location == null) {
+            toast(getString(R.string.msg_no_location))
+            return
+        }
+        val message = buildString {
+            appendLine(String.format(Locale.US, getString(R.string.label_latitude), location.latitude))
+            appendLine(String.format(Locale.US, getString(R.string.label_longitude), location.longitude))
+            if (location.hasAltitude()) {
+                appendLine(String.format(Locale.US, getString(R.string.label_altitude), location.altitude))
+            } else {
+                appendLine(getString(R.string.label_altitude_unavailable))
+            }
+            if (location.hasAccuracy()) {
+                append(String.format(Locale.US, getString(R.string.label_accuracy), location.accuracy))
+            }
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.title_current_position)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+    private fun openSunInfo() {
+        val location = lastLocation
+        if (location == null) {
+            toast(getString(R.string.msg_no_location))
+            return
+        }
+        val intent = Intent(this, SunInfoActivity::class.java).apply {
+            putExtra(SunInfoActivity.EXTRA_LAT, location.latitude)
+            putExtra(SunInfoActivity.EXTRA_LON, location.longitude)
+        }
+        startActivity(intent)
     }
 
     private fun showElevationProfile() {
@@ -622,6 +724,96 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private enum class ShareTarget(val packageName: String, val labelRes: Int) {
+        WHATSAPP("com.whatsapp", R.string.share_target_whatsapp),
+        SIGNAL("org.thoughtcrime.securesms", R.string.share_target_signal),
+        SMS("", R.string.share_target_sms)
+    }
+
+    private fun showShareLocationDialog() {
+        if (lastLocation == null) {
+            toast(getString(R.string.msg_no_location_to_share))
+            return
+        }
+        val targets = ShareTarget.values()
+        AlertDialog.Builder(this)
+            .setTitle(R.string.title_share_location)
+            .setItems(targets.map { getString(it.labelRes) }.toTypedArray()) { _, which ->
+                shareLocation(targets[which])
+            }
+            .show()
+    }
+
+    private fun shareLocation(target: ShareTarget) {
+        val location = lastLocation ?: run {
+            toast(getString(R.string.msg_no_location_to_share))
+            return
+        }
+        lifecycleScope.launch {
+            val distanceMeters = GeoUtils.totalDistanceMeters(viewModel.trackPoints.value)
+            val distanceText = if (distanceMeters >= 1000) {
+                String.format(Locale.US, "%.2f km", distanceMeters / 1000f)
+            } else {
+                "${distanceMeters.roundToInt()} m"
+            }
+            val mapLink = "https://www.openstreetmap.org/?mlat=${location.latitude}&mlon=${location.longitude}" +
+                "#map=16/${location.latitude}/${location.longitude}"
+            val message = getString(R.string.share_message_template, mapLink, distanceText)
+
+            when (target) {
+                ShareTarget.SMS -> sendSms(message)
+                else -> {
+                    val gpxUri = writeShareGpxSnapshot()
+                    sendToApp(target, message, gpxUri)
+                }
+            }
+        }
+    }
+
+    private suspend fun writeShareGpxSnapshot(): Uri? {
+        val snapshot = viewModel.getCurrentTripSnapshot() ?: return null
+        val (trip, waypoints, track) = snapshot
+        if (waypoints.isEmpty() && track.isEmpty()) return null
+        return withContext(Dispatchers.IO) {
+            try {
+                val dir = File(cacheDir, "share").apply { mkdirs() }
+                val file = File(dir, "trasa.gpx")
+                FileOutputStream(file).use { GpxExporter.export(trip, waypoints, track, it) }
+                FileProvider.getUriForFile(this@MainActivity, "$packageName.fileprovider", file)
+            } catch (_: Exception) {
+                null
+            }
+        }
+    }
+
+    private fun sendToApp(target: ShareTarget, message: String, gpxUri: Uri?) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = if (gpxUri != null) "application/gpx+xml" else "text/plain"
+            putExtra(Intent.EXTRA_TEXT, message)
+            if (gpxUri != null) {
+                putExtra(Intent.EXTRA_STREAM, gpxUri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            setPackage(target.packageName)
+        }
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            toast(getString(R.string.msg_app_not_installed, getString(target.labelRes)))
+        }
+    }
+
+    private fun sendSms(message: String) {
+        val intent = Intent(Intent.ACTION_SENDTO, Uri.parse("smsto:")).apply {
+            putExtra("sms_body", message)
+        }
+        try {
+            startActivity(intent)
+        } catch (_: ActivityNotFoundException) {
+            toast(getString(R.string.msg_app_not_installed, getString(R.string.share_target_sms)))
+        }
+    }
+
     private fun hasFineLocationPermission() =
         ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
 
@@ -643,6 +835,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_share_location -> {
+                showShareLocationDialog()
+                return true
+            }
             R.id.action_new_trip -> {
                 if (recording) stopRecording()
                 viewModel.newTrip()
@@ -672,6 +868,14 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_auto_waypoint -> {
                 showAutoWaypointDialog()
+                return true
+            }
+            R.id.action_current_position -> {
+                showCurrentPositionDialog()
+                return true
+            }
+            R.id.action_sun_info -> {
+                openSunInfo()
                 return true
             }
         }

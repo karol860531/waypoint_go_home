@@ -49,15 +49,22 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         repository.deleteWaypoint(waypointId)
     }
 
-    /** Builds the reversed route back to [targetWaypointId], or the trip's start point if null. */
-    fun enterReturnMode(targetWaypointId: Long?) {
+    /**
+     * Builds the return route back to [targetWaypointId], or the trip's start point if null.
+     * When [direct] is true, the route skips straight to the target in one leg; otherwise it
+     * steps back through every waypoint in between, in reverse order.
+     */
+    fun enterReturnMode(targetWaypointId: Long?, direct: Boolean = false) {
         val all = waypoints.value.sortedBy { it.sequence }
         if (all.isEmpty()) return
         val target = all.firstOrNull { it.id == targetWaypointId }
             ?: all.firstOrNull { it.isStart }
             ?: all.first()
-        val route = all.filter { it.sequence >= target.sequence }
-            .sortedByDescending { it.sequence }
+        val route = if (direct) {
+            listOf(target)
+        } else {
+            all.filter { it.sequence >= target.sequence }.sortedByDescending { it.sequence }
+        }
         _returnRoute.value = route
         _returnIndex.value = 0
         _returnMode.value = true

@@ -2,15 +2,18 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        android:background="@color/primary"
+        android:theme="@style/ThemeOverlay.WaypointGoHome.Toolbar"
+        android:elevation="4dp"
         app:title="@string/title_trip_history"
+        app:titleTextColor="@color/on_primary"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
@@ -30,6 +33,7 @@
         android:layout_height="wrap_content"
         android:text="@string/msg_no_trips"
         android:textSize="16sp"
+        android:textColor="@color/on_surface_variant"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="@id/tripList"
         app:layout_constraintBottom_toBottomOf="@id/tripList"

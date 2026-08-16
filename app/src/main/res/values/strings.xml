@@ -67,5 +67,51 @@
     <string name="btn_skip">Pomiń</string>
 
     <string name="label_routing_toggle">Trasa po drogach</string>
-    <string name="msg_routing_unavailable">Nie udało się pobrać trasy po drogach (wymaga internetu)</string>
+    <string name="msg_routing_no_connection">Brak połączenia z internetem — nie można pobrać trasy po drogach</string>
+    <string name="msg_routing_no_route">Nie znaleziono trasy po drogach w pobliżu tych punktów (usługa obsługuje tylko drogi dla samochodów, nie ścieżki leśne)</string>
+    <string name="msg_routing_server_error">Serwer tras jest chwilowo niedostępny, spróbuj ponownie później</string>
+
+    <string name="title_offline_map_unavailable">Pobieranie mapy niedostępne</string>
+    <string name="msg_offline_bulk_not_allowed">Darmowy serwer map OpenStreetMap nie zezwala na masowe pobieranie kafelków — to zasada ochrony wspólnego serwera przed przeciążeniem. Mapa i tak zapisuje się automatycznie na urządzeniu podczas przeglądania, więc obszary, które już widziałeś online, będą dostępne offline.</string>
+
+    <string name="menu_return_via_waypoints">Wróć przez waypointy do startu</string>
+    <string name="menu_return_direct_to_start">Idź prosto do startu (pomiń waypointy)</string>
+    <string name="menu_return_choose_target">Wybierz punkt docelowy</string>
+    <string name="title_choose_target">Dokąd wrócić?</string>
+
+    <string name="menu_share_location">Udostępnij lokalizację</string>
+    <string name="title_share_location">Udostępnij przez</string>
+    <string name="share_target_whatsapp">WhatsApp</string>
+    <string name="share_target_signal">Signal</string>
+    <string name="share_target_sms">SMS</string>
+    <string name="share_message_template">Moja aktualna lokalizacja: %1$s\nPokonany dystans: %2$s\n\nWysłano z aplikacji Waypoint Go Home</string>
+    <string name="msg_no_location_to_share">Brak aktualnej lokalizacji do udostępnienia</string>
+    <string name="msg_app_not_installed">%1$s nie jest zainstalowany(a)</string>
+
+    <string name="btn_locate_me">Zlokalizuj mnie</string>
+
+    <string name="menu_current_position">Aktualna pozycja</string>
+    <string name="title_current_position">Aktualna pozycja</string>
+    <string name="label_latitude">Szerokość: %1$.6f°</string>
+    <string name="label_longitude">Długość: %1$.6f°</string>
+    <string name="label_altitude">Wysokość: %1$.0f m n.p.m.</string>
+    <string name="label_altitude_unavailable">Wysokość: niedostępna</string>
+    <string name="label_accuracy">Dokładność GPS: ±%1$.0f m</string>
+    <string name="msg_no_location">Lokalizacja jeszcze niedostępna — poczekaj chwilę</string>
+
+    <string name="menu_sun_info">Słońce</string>
+    <string name="title_sun_info">Słońce</string>
+    <string name="label_sunrise">Wschód</string>
+    <string name="label_sunset">Zachód</string>
+    <string name="label_sun_altitude">Wysokość słońca: %1$.0f°</string>
+    <string name="label_sun_direction">Kierunek: %1$.0f° (%2$s)</string>
+    <string name="legend_sunrise">Wschód</string>
+    <string name="legend_sunset">Zachód</string>
+    <string name="legend_sun_now">Słońce teraz</string>
+    <string name="countdown_to_dawn">Świt za %1$s</string>
+    <string name="countdown_to_sunrise">Wschód słońca za %1$s</string>
+    <string name="countdown_to_dusk">Zmierzch za %1$s</string>
+    <string name="night_next_sunrise">Noc — wschód słońca jutro o %1$s</string>
+    <string name="duration_hm">%1$dh %2$dmin</string>
+    <string name="duration_m">%1$d min</string>
 </resources>

@@ -1,12 +1,23 @@
 <resources>
-    <color name="purple_700">#3F51B5</color>
-    <color name="purple_500">#5C6BC0</color>
-    <color name="teal_700">#00796B</color>
     <color name="white">#FFFFFF</color>
     <color name="black">#FF000000</color>
-    <color name="track_line">#FF3F51B5</color>
+
+    <color name="primary">#2E7D32</color>
+    <color name="primary_dark">#1B5E20</color>
+    <color name="on_primary">#FFFFFF</color>
+
+    <color name="secondary">#FF7043</color>
+    <color name="on_secondary">#FFFFFF</color>
+
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#EEF1EC</color>
+    <color name="background">#F5F5F0</color>
+    <color name="on_surface">#1B1B1B</color>
+    <color name="on_surface_variant">#5F6368</color>
+    <color name="outline">#E0E0E0</color>
+
+    <color name="track_line">#FF1E88E5</color>
     <color name="marker_start">#FF2E7D32</color>
     <color name="marker_waypoint">#FFF57C00</color>
     <color name="marker_target">#FFC62828</color>
-    <color name="panel_bg">#EE212121</color>
 </resources>

@@ -45,6 +45,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.waypoint.gohome.R
 import com.waypoint.gohome.about.ChangelogActivity
+import com.waypoint.gohome.compass.CompassActivity
 import com.waypoint.gohome.data.GeoUtils
 import com.waypoint.gohome.data.GpxExporter
 import com.waypoint.gohome.data.GpxImporter
@@ -171,6 +172,7 @@ class MainActivity : AppCompatActivity() {
         fusedClient = LocationServices.getFusedLocationProviderClient(this)
         compass = CompassSensor(this) { heading ->
             lastHeading = heading
+            binding.mapCompass.heading = heading
             updateNavArrow()
         }
 
@@ -1099,6 +1101,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_sun_info -> {
                 openSunInfo()
+                return true
+            }
+            R.id.action_compass -> {
+                startActivity(Intent(this, CompassActivity::class.java))
                 return true
             }
             R.id.action_changelog -> {

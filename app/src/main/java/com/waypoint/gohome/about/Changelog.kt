@@ -10,6 +10,14 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.7.0",
+            date = "2026-08-17",
+            changes = listOf(
+                "Zwykły kompas jako osobny ekran (Menu → Informacje → Kompas)",
+                "Mały kompas na mapie, w lewym dolnym rogu, zawsze widoczny"
+            )
+        ),
+        ChangelogEntry(
             version = "1.6.0",
             date = "2026-08-17",
             changes = listOf(

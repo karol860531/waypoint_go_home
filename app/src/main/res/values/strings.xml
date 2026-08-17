@@ -126,6 +126,9 @@
 
     <string name="menu_sun_info">Słońce</string>
     <string name="title_sun_info">Słońce</string>
+    <string name="menu_compass">Kompas</string>
+    <string name="title_compass">Kompas</string>
+    <string name="label_heading_degrees">%1$d°</string>
     <string name="label_sunrise">Wschód</string>
     <string name="label_sunset">Zachód</string>
     <string name="label_sun_altitude">Wysokość słońca: %1$.0f°</string>

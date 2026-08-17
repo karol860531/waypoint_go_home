@@ -38,6 +38,17 @@ object GpxExporter {
                 }
             )
             serializer.endTag(null, "name")
+            if (wp.photoUri != null) {
+                serializer.startTag(null, "link")
+                serializer.attribute(null, "href", ExportPhotoNaming.fileNameFor(wp.id))
+                serializer.startTag(null, "text")
+                serializer.text("Zdjęcie")
+                serializer.endTag(null, "text")
+                serializer.startTag(null, "type")
+                serializer.text("image/jpeg")
+                serializer.endTag(null, "type")
+                serializer.endTag(null, "link")
+            }
             serializer.endTag(null, "wpt")
         }
 

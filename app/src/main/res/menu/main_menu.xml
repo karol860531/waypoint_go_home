@@ -17,6 +17,9 @@
         android:id="@+id/action_export_gpx"
         android:title="@string/menu_export_gpx" />
     <item
+        android:id="@+id/action_export_bundle"
+        android:title="@string/menu_export_bundle" />
+    <item
         android:id="@+id/action_import_gpx"
         android:title="@string/menu_import_gpx" />
     <item

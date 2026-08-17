@@ -46,6 +46,10 @@ import com.waypoint.gohome.about.ChangelogActivity
 import com.waypoint.gohome.data.GeoUtils
 import com.waypoint.gohome.data.GpxExporter
 import com.waypoint.gohome.data.GpxImporter
+import com.waypoint.gohome.data.GpxZipExporter
+import com.waypoint.gohome.data.KmzExporter
+import com.waypoint.gohome.data.TrackPoint
+import com.waypoint.gohome.data.Trip
 import com.waypoint.gohome.data.Waypoint
 import com.waypoint.gohome.databinding.ActivityMainBinding
 import com.waypoint.gohome.history.TripHistoryActivity
@@ -129,6 +133,20 @@ class MainActivity : AppCompatActivity() {
     private val importGpxLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri != null) importGpxFrom(uri)
+        }
+
+    private val exportGpxZipLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/zip")) { uri ->
+            if (uri != null) exportBundleTo(uri) { trip, waypoints, track, out ->
+                GpxZipExporter.export(trip, waypoints, track, contentResolver, out)
+            }
+        }
+
+    private val exportKmzLauncher =
+        registerForActivityResult(ActivityResultContracts.CreateDocument("application/vnd.google-earth.kmz")) { uri ->
+            if (uri != null) exportBundleTo(uri) { trip, waypoints, track, out ->
+                KmzExporter.export(trip, waypoints, track, contentResolver, out)
+            }
         }
 
     private val takePictureLauncher =
@@ -708,6 +726,44 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showExportBundleDialog() {
+        AlertDialog.Builder(this)
+            .setTitle(R.string.title_export_bundle)
+            .setItems(
+                arrayOf(getString(R.string.option_export_gpx_zip), getString(R.string.option_export_kmz))
+            ) { _, which ->
+                val stamp = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(java.util.Date())
+                when (which) {
+                    0 -> exportGpxZipLauncher.launch("trasa_$stamp.zip")
+                    1 -> exportKmzLauncher.launch("trasa_$stamp.kmz")
+                }
+            }
+            .show()
+    }
+
+    private fun exportBundleTo(
+        uri: Uri,
+        writer: (Trip, List<Waypoint>, List<TrackPoint>, java.io.OutputStream) -> Unit
+    ) {
+        lifecycleScope.launch {
+            val snapshot = viewModel.getCurrentTripSnapshot()
+            if (snapshot == null) {
+                toast(getString(R.string.msg_bundle_export_failed))
+                return@launch
+            }
+            val (trip, waypoints, track) = snapshot
+            val success = withContext(Dispatchers.IO) {
+                try {
+                    contentResolver.openOutputStream(uri)?.use { writer(trip, waypoints, track, it) }
+                    true
+                } catch (_: Exception) {
+                    false
+                }
+            }
+            toast(getString(if (success) R.string.msg_bundle_exported else R.string.msg_bundle_export_failed))
+        }
+    }
+
     private fun importGpxFrom(uri: Uri) {
         lifecycleScope.launch {
             val parsed = withContext(Dispatchers.IO) {
@@ -951,6 +1007,10 @@ class MainActivity : AppCompatActivity() {
             R.id.action_export_gpx -> {
                 val fileName = "trasa_" + SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(java.util.Date()) + ".gpx"
                 exportGpxLauncher.launch(fileName)
+                return true
+            }
+            R.id.action_export_bundle -> {
+                showExportBundleDialog()
                 return true
             }
             R.id.action_import_gpx -> {

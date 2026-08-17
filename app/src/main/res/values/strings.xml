@@ -41,6 +41,10 @@
     <string name="menu_changelog">Historia zmian</string>
     <string name="menu_export_gpx">Eksportuj GPX</string>
     <string name="menu_import_gpx">Importuj GPX</string>
+    <string name="menu_export_bundle">Eksportuj ze zdjęciami</string>
+    <string name="title_export_bundle">Eksportuj jako</string>
+    <string name="option_export_gpx_zip">GPX + ZIP (ze zdjęciami)</string>
+    <string name="option_export_kmz">KMZ (Google Earth, ze zdjęciami)</string>
     <string name="menu_offline_map">Pobierz mapę offline</string>
     <string name="menu_elevation_profile">Profil wysokości</string>
     <string name="menu_auto_waypoint">Auto-waypoint</string>
@@ -61,6 +65,8 @@
 
     <string name="msg_gpx_exported">Wyeksportowano GPX</string>
     <string name="msg_gpx_export_failed">Nie udało się wyeksportować GPX</string>
+    <string name="msg_bundle_exported">Wyeksportowano trasę</string>
+    <string name="msg_bundle_export_failed">Nie udało się wyeksportować trasy</string>
     <string name="msg_gpx_imported">Zaimportowano trasę z GPX</string>
     <string name="msg_gpx_import_failed">Nie udało się zaimportować pliku GPX</string>
 

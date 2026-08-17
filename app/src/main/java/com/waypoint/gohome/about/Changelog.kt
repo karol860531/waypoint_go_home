@@ -10,6 +10,13 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.5.0",
+            date = "2026-08-17",
+            changes = listOf(
+                "Eksport trasy ze zdjęciami: GPX + ZIP lub KMZ (Google Earth)"
+            )
+        ),
+        ChangelogEntry(
             version = "1.4.0",
             date = "2026-08-17",
             changes = listOf(

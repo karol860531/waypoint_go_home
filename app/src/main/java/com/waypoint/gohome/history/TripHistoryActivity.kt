@@ -1,7 +1,7 @@
 package com.waypoint.gohome.history
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -56,7 +56,7 @@ class TripHistoryActivity : AppCompatActivity() {
         val dateText = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl", "PL")).format(Date(trip.createdAt))
         val distanceKm = summary.second / 1000f
         val summaryText = getString(R.string.trip_item_points, summary.first, String.format(Locale.US, "%.1f km", distanceKm))
-        return TripListItem(trip.id, dateText, summaryText)
+        return TripListItem(trip.id, dateText, summaryText, isCurrent = trip.id == repository.currentTripId.value)
     }
 
     private fun openTrip(item: TripListItem) {
@@ -67,7 +67,7 @@ class TripHistoryActivity : AppCompatActivity() {
     }
 
     private fun confirmDeleteTrip(item: TripListItem) {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setMessage(R.string.confirm_delete_trip)
             .setPositiveButton(R.string.btn_delete) { _, _ ->
                 lifecycleScope.launch {

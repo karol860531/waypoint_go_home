@@ -172,6 +172,15 @@
             </LinearLayout>
 
             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:gravity="center"
+                android:text="@string/hint_sun_compass_radius"
+                android:textColor="@color/on_surface_variant"
+                android:textSize="11sp" />
+
+            <TextView
                 android:id="@+id/sunAltitudeText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

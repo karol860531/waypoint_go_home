@@ -10,6 +10,22 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.6.0",
+            date = "2026-08-17",
+            changes = listOf(
+                "Menu podzielone na grupy: Trasa / Narzędzia / Informacje",
+                "Spójny wygląd dialogów (Material 3) w całej aplikacji",
+                "Komunikat przy ponownym naciśnięciu „Zaznacz pozycję”, gdy start już ustawiony",
+                "Większe, czytelniejsze przyciski na dolnym pasku",
+                "Rozróżnienie nazw: „Zaznacz pozycję” vs „Współrzędne GPS”",
+                "Opisy przy wyborze trybu powrotu",
+                "Wyjaśnienie odczytu kompasu słońca (odległość od środka = wysokość nad horyzontem)",
+                "Powiadomienia (Snackbar) zamiast krótkich, łatwych do przeoczenia Toastów",
+                "Podświetlenie aktualnie wczytanej trasy w historii tras",
+                "Pola tekstowe w dialogach z etykietą (Material TextInputLayout)"
+            )
+        ),
+        ChangelogEntry(
             version = "1.5.0",
             date = "2026-08-17",
             changes = listOf(

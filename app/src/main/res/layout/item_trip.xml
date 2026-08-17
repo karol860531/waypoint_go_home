@@ -10,6 +10,7 @@
     app:cardCornerRadius="16dp"
     app:cardElevation="1dp"
     app:strokeWidth="0dp"
+    app:strokeColor="@color/primary"
     app:rippleColor="@color/primary">
 
     <LinearLayout
@@ -46,15 +47,28 @@
                 android:textSize="13sp"
                 android:textColor="@color/on_surface_variant"
                 tools:text="3 waypointy • 4.2 km" />
+
+            <TextView
+                android:id="@+id/currentBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/label_current_trip"
+                android:textColor="@color/primary"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:visibility="visible" />
         </LinearLayout>
 
         <ImageButton
             android:id="@+id/btnDeleteTrip"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:padding="12dp"
             android:background="?attr/selectableItemBackgroundBorderless"
             android:contentDescription="@string/action_delete_trip"
-            android:src="@android:drawable/ic_menu_delete"
+            android:src="@drawable/ic_delete"
             app:tint="@color/on_surface_variant" />
 
     </LinearLayout>

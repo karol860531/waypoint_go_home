@@ -22,12 +22,14 @@ import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
-import android.widget.Toast
+import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.app.AlertDialog
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -212,7 +214,11 @@ class MainActivity : AppCompatActivity() {
     private fun setupButtons() {
         binding.btnMarkPosition.setOnClickListener {
             withCurrentLocation { location ->
-                viewModel.markPosition(location.latitude, location.longitude, altitudeOf(location))
+                if (viewModel.waypoints.value.isEmpty()) {
+                    viewModel.markPosition(location.latitude, location.longitude, altitudeOf(location))
+                } else {
+                    toast(getString(R.string.msg_start_already_set))
+                }
                 centerMap(location)
             }
         }
@@ -308,17 +314,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun promptAddWaypoint(location: Location) {
-        val editText = EditText(this).apply {
-            hint = getString(R.string.hint_waypoint_label)
+        val editText = TextInputEditText(this).apply {
             inputType = InputType.TYPE_CLASS_TEXT
+        }
+        val inputLayout = TextInputLayout(this).apply {
+            hint = getString(R.string.hint_waypoint_label)
+            addView(editText)
         }
         val container = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             val pad = (16 * resources.displayMetrics.density).toInt()
-            setPadding(pad, pad, pad, 0)
-            addView(editText)
+            setPadding(pad, 0, pad, 0)
+            addView(inputLayout)
         }
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.btn_add_waypoint)
             .setView(container)
             .setPositiveButton(R.string.btn_add_waypoint) { _, _ ->
@@ -330,28 +339,76 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showReturnModeDialog() {
-        AlertDialog.Builder(this)
-            .setTitle(R.string.btn_return)
-            .setItems(
-                arrayOf(
-                    getString(R.string.menu_return_via_waypoints),
-                    getString(R.string.menu_return_direct_to_start),
-                    getString(R.string.menu_return_choose_target)
-                )
-            ) { _, which ->
-                when (which) {
-                    0 -> viewModel.enterReturnMode(targetWaypointId = null, direct = false)
-                    1 -> viewModel.enterReturnMode(targetWaypointId = null, direct = true)
-                    2 -> showChooseTargetDialog()
+        showTwoLineOptionsDialog(
+            title = getString(R.string.btn_return),
+            options = listOf(
+                Triple(getString(R.string.menu_return_via_waypoints), getString(R.string.subtitle_return_via_waypoints)) {
+                    viewModel.enterReturnMode(targetWaypointId = null, direct = false)
+                },
+                Triple(getString(R.string.menu_return_direct_to_start), getString(R.string.subtitle_return_direct_to_start)) {
+                    viewModel.enterReturnMode(targetWaypointId = null, direct = true)
+                },
+                Triple(getString(R.string.menu_return_choose_target), getString(R.string.subtitle_return_choose_target)) {
+                    showChooseTargetDialog()
+                }
+            )
+        )
+    }
+
+    /** A list dialog where each row shows a bold label plus a smaller explanatory subtitle. */
+    private fun showTwoLineOptionsDialog(title: String, options: List<Triple<String, String, () -> Unit>>) {
+        val density = resources.displayMetrics.density
+        val container = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+
+        val dialog = MaterialAlertDialogBuilder(this)
+            .setTitle(title)
+            .setView(container)
+            .setNegativeButton(R.string.menu_cancel, null)
+            .create()
+
+        options.forEach { (label, subtitle, action) ->
+            val row = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                isClickable = true
+                isFocusable = true
+                val outValue = android.util.TypedValue()
+                theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)
+                setBackgroundResource(outValue.resourceId)
+                val padH = (20 * density).toInt()
+                val padV = (14 * density).toInt()
+                setPadding(padH, padV, padH, padV)
+                setOnClickListener {
+                    dialog.dismiss()
+                    action()
                 }
             }
-            .show()
+            row.addView(
+                TextView(this).apply {
+                    text = label
+                    textSize = 16f
+                    setTextColor(color(R.color.on_surface))
+                    setTypeface(typeface, android.graphics.Typeface.BOLD)
+                }
+            )
+            row.addView(
+                TextView(this).apply {
+                    text = subtitle
+                    textSize = 13f
+                    setTextColor(color(R.color.on_surface_variant))
+                    setPadding(0, (2 * density).toInt(), 0, 0)
+                }
+            )
+            container.addView(row)
+        }
+        dialog.show()
     }
+
+    private fun color(colorRes: Int) = ContextCompat.getColor(this, colorRes)
 
     private fun showChooseTargetDialog() {
         val sortedWaypoints = viewModel.waypoints.value.sortedBy { it.sequence }
         val labels = sortedWaypoints.map { waypointLabel(it) }.toTypedArray()
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.title_choose_target)
             .setItems(labels) { _, which ->
                 viewModel.enterReturnMode(targetWaypointId = sortedWaypoints[which].id)
@@ -376,7 +433,7 @@ class MainActivity : AppCompatActivity() {
         )
         actions.add(getString(R.string.menu_delete_waypoint) to { viewModel.deleteWaypoint(waypoint.id) })
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(waypointLabel(waypoint))
             .setItems(actions.map { it.first }.toTypedArray()) { _, which -> actions[which].second() }
             .setNegativeButton(R.string.menu_cancel, null)
@@ -413,7 +470,7 @@ class MainActivity : AppCompatActivity() {
             scaleType = ImageView.ScaleType.FIT_CENTER
             setImageBitmap(bitmap)
         }
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setView(imageView)
             .setPositiveButton(android.R.string.ok, null)
             .show()
@@ -625,7 +682,7 @@ class MainActivity : AppCompatActivity() {
     private fun maybePromptBatteryOptimization(onContinue: () -> Unit) {
         val powerManager = getSystemService(PowerManager::class.java)
         if (powerManager != null && !powerManager.isIgnoringBatteryOptimizations(packageName)) {
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.dialog_battery_title)
                 .setMessage(R.string.dialog_battery_message)
                 .setPositiveButton(R.string.btn_open_settings) { _, _ ->
@@ -677,15 +734,18 @@ class MainActivity : AppCompatActivity() {
             text = getString(R.string.menu_auto_waypoint)
             isChecked = prefs.getBoolean(LocationTrackingService.KEY_AUTO_WAYPOINT_ENABLED, false)
         }
-        val editText = EditText(this).apply {
+        val editText = TextInputEditText(this).apply {
             inputType = InputType.TYPE_CLASS_NUMBER
-            hint = getString(R.string.dialog_auto_waypoint_distance_hint)
             setText(prefs.getFloat(LocationTrackingService.KEY_AUTO_WAYPOINT_DISTANCE, LocationTrackingService.DEFAULT_AUTO_WAYPOINT_DISTANCE).toInt().toString())
         }
+        val inputLayout = TextInputLayout(this).apply {
+            hint = getString(R.string.dialog_auto_waypoint_distance_hint)
+            addView(editText)
+        }
         container.addView(checkBox)
-        container.addView(editText)
+        container.addView(inputLayout)
 
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.dialog_auto_waypoint_title)
             .setView(container)
             .setPositiveButton(android.R.string.ok) { _, _ ->
@@ -727,7 +787,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showExportBundleDialog() {
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.title_export_bundle)
             .setItems(
                 arrayOf(getString(R.string.option_export_gpx_zip), getString(R.string.option_export_kmz))
@@ -787,7 +847,7 @@ class MainActivity : AppCompatActivity() {
         // to protect the shared server. osmdroid enforces this by throwing on a background thread, which
         // would otherwise crash the app with no chance to catch it — so we check first instead of calling in.
         if (!TileSourceFactory.MAPNIK.tileSourcePolicy.acceptsBulkDownload()) {
-            AlertDialog.Builder(this)
+            MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.title_offline_map_unavailable)
                 .setMessage(R.string.msg_offline_bulk_not_allowed)
                 .setPositiveButton(android.R.string.ok, null)
@@ -834,7 +894,7 @@ class MainActivity : AppCompatActivity() {
                 append(String.format(Locale.US, getString(R.string.label_accuracy), location.accuracy))
             }
         }
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.title_current_position)
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, null)
@@ -872,7 +932,7 @@ class MainActivity : AppCompatActivity() {
             setPadding(pad, pad, pad, pad)
             addView(chart)
         }
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.title_elevation_profile)
             .setView(container)
             .setPositiveButton(android.R.string.ok, null)
@@ -891,7 +951,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
         val targets = ShareTarget.values()
-        AlertDialog.Builder(this)
+        MaterialAlertDialogBuilder(this)
             .setTitle(R.string.title_share_location)
             .setItems(targets.map { getString(it.labelRes) }.toTypedArray()) { _, which ->
                 shareLocation(targets[which])
@@ -981,7 +1041,11 @@ class MainActivity : AppCompatActivity() {
         )
     }
 
-    private fun toast(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    private fun toast(message: String) {
+        Snackbar.make(binding.root, message, Snackbar.LENGTH_SHORT)
+            .setAnchorView(binding.controlBar)
+            .show()
+    }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)

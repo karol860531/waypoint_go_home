@@ -18,6 +18,7 @@
     <string name="msg_permission_required">Aplikacja potrzebuje dostępu do lokalizacji</string>
     <string name="msg_background_permission_rationale">Aby rysować trasę również przy zablokowanym ekranie, zezwól na dostęp do lokalizacji "Zawsze" na następnym ekranie</string>
     <string name="msg_no_waypoints">Brak zapisanych waypointów — najpierw zaznacz pozycję i dodaj punkty</string>
+    <string name="msg_start_already_set">Punkt startowy już ustawiony</string>
     <string name="msg_arrived">Dotarłeś do celu</string>
     <string name="msg_target_set">Ustawiono jako cel powrotu</string>
 
@@ -59,6 +60,7 @@
     <string name="label_installed_version">Zainstalowana wersja: %1$s</string>
     <string name="trip_item_points">%1$d punktów • %2$s</string>
     <string name="action_delete_trip">Usuń trasę</string>
+    <string name="label_current_trip">● Aktualna trasa</string>
     <string name="confirm_delete_trip">Usunąć tę trasę? Tej operacji nie można cofnąć.</string>
     <string name="btn_delete">Usuń</string>
     <string name="msg_no_trips">Brak zapisanych tras</string>
@@ -91,9 +93,16 @@
     <string name="msg_offline_bulk_not_allowed">Darmowy serwer map OpenStreetMap nie zezwala na masowe pobieranie kafelków — to zasada ochrony wspólnego serwera przed przeciążeniem. Mapa i tak zapisuje się automatycznie na urządzeniu podczas przeglądania, więc obszary, które już widziałeś online, będą dostępne offline.</string>
 
     <string name="menu_return_via_waypoints">Wróć przez waypointy do startu</string>
-    <string name="menu_return_direct_to_start">Idź prosto do startu (pomiń waypointy)</string>
+    <string name="subtitle_return_via_waypoints">Krok po kroku, przez wszystkie zapisane punkty po kolei</string>
+    <string name="menu_return_direct_to_start">Idź prosto do startu</string>
+    <string name="subtitle_return_direct_to_start">Kompas wskazuje wprost na start, z pominięciem waypointów</string>
     <string name="menu_return_choose_target">Wybierz punkt docelowy</string>
+    <string name="subtitle_return_choose_target">Nawigacja przez waypointy do wybranego przez Ciebie punktu</string>
     <string name="title_choose_target">Dokąd wrócić?</string>
+
+    <string name="menu_group_trip">Trasa</string>
+    <string name="menu_group_tools">Narzędzia</string>
+    <string name="menu_group_info">Informacje</string>
 
     <string name="menu_share_location">Udostępnij lokalizację</string>
     <string name="title_share_location">Udostępnij przez</string>
@@ -106,8 +115,8 @@
 
     <string name="btn_locate_me">Zlokalizuj mnie</string>
 
-    <string name="menu_current_position">Aktualna pozycja</string>
-    <string name="title_current_position">Aktualna pozycja</string>
+    <string name="menu_current_position">Współrzędne GPS</string>
+    <string name="title_current_position">Współrzędne GPS</string>
     <string name="label_latitude">Szerokość: %1$.6f°</string>
     <string name="label_longitude">Długość: %1$.6f°</string>
     <string name="label_altitude">Wysokość: %1$.0f m n.p.m.</string>
@@ -124,6 +133,7 @@
     <string name="legend_sunrise">Wschód</string>
     <string name="legend_sunset">Zachód</string>
     <string name="legend_sun_now">Słońce teraz</string>
+    <string name="hint_sun_compass_radius">Im bliżej środka, tym wyżej słońce nad horyzontem</string>
     <string name="countdown_to_dawn">Świt za %1$s</string>
     <string name="countdown_to_sunrise">Wschód słońca za %1$s</string>
     <string name="countdown_to_dusk">Zmierzch za %1$s</string>

@@ -29,7 +29,14 @@ object GpxExporter {
                 serializer.endTag(null, "ele")
             }
             serializer.startTag(null, "name")
-            serializer.text(if (wp.isStart) "Start" else "Waypoint ${wp.sequence}")
+            serializer.text(
+                when {
+                    wp.isStart -> "Start"
+                    wp.isEnd -> "End"
+                    !wp.label.isNullOrBlank() -> wp.label
+                    else -> "Waypoint ${wp.sequence}"
+                }
+            )
             serializer.endTag(null, "name")
             serializer.endTag(null, "wpt")
         }

@@ -34,4 +34,7 @@
     <item
         android:id="@+id/action_sun_info"
         android:title="@string/menu_sun_info" />
+    <item
+        android:id="@+id/action_changelog"
+        android:title="@string/menu_changelog" />
 </menu>

@@ -20,6 +20,9 @@
             <action android:name="android.intent.action.SENDTO" />
             <data android:scheme="smsto" />
         </intent>
+        <intent>
+            <action android:name="android.media.action.IMAGE_CAPTURE" />
+        </intent>
     </queries>
 
     <application
@@ -46,6 +49,10 @@
 
         <activity
             android:name=".sun.SunInfoActivity"
+            android:exported="false" />
+
+        <activity
+            android:name=".about.ChangelogActivity"
             android:exported="false" />
 
         <service

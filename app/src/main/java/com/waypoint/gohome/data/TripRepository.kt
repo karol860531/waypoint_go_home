@@ -57,14 +57,27 @@ class TripRepository private constructor(context: Context) {
         SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl", "PL")).format(Date())
 
     /** The very first point of a trip is automatically flagged as its start. */
-    suspend fun addWaypoint(lat: Double, lon: Double, altitude: Double?): Waypoint =
+    suspend fun addWaypoint(lat: Double, lon: Double, altitude: Double?, label: String? = null): Waypoint =
         withContext(Dispatchers.IO) {
             val tripId = _currentTripId.value
             val isStart = _waypoints.value.isEmpty()
             val nextSequence = (_waypoints.value.maxOfOrNull { it.sequence } ?: -1) + 1
             val timestamp = System.currentTimeMillis()
-            val id = dbHelper.insertWaypoint(tripId, lat, lon, altitude, nextSequence, isStart, timestamp)
-            val waypoint = Waypoint(id, tripId, lat, lon, altitude, nextSequence, isStart, timestamp)
+            val id = dbHelper.insertWaypoint(tripId, lat, lon, altitude, nextSequence, isStart, false, label, timestamp)
+            val waypoint = Waypoint(id, tripId, lat, lon, altitude, nextSequence, isStart, false, label, null, timestamp)
+            _waypoints.value = _waypoints.value + waypoint
+            waypoint
+        }
+
+    /** Dropped automatically where recording stops — marks the trip's end point. */
+    suspend fun addEndWaypoint(lat: Double, lon: Double, altitude: Double?): Waypoint =
+        withContext(Dispatchers.IO) {
+            val tripId = _currentTripId.value
+            val isStart = _waypoints.value.isEmpty()
+            val nextSequence = (_waypoints.value.maxOfOrNull { it.sequence } ?: -1) + 1
+            val timestamp = System.currentTimeMillis()
+            val id = dbHelper.insertWaypoint(tripId, lat, lon, altitude, nextSequence, isStart, true, null, timestamp)
+            val waypoint = Waypoint(id, tripId, lat, lon, altitude, nextSequence, isStart, true, null, null, timestamp)
             _waypoints.value = _waypoints.value + waypoint
             waypoint
         }
@@ -72,6 +85,11 @@ class TripRepository private constructor(context: Context) {
     suspend fun deleteWaypoint(waypointId: Long) = withContext(Dispatchers.IO) {
         dbHelper.deleteWaypoint(waypointId)
         _waypoints.value = _waypoints.value.filterNot { it.id == waypointId }
+    }
+
+    suspend fun setWaypointPhoto(waypointId: Long, photoUri: String?) = withContext(Dispatchers.IO) {
+        dbHelper.updateWaypointPhoto(waypointId, photoUri)
+        _waypoints.value = _waypoints.value.map { if (it.id == waypointId) it.copy(photoUri = photoUri) else it }
     }
 
     suspend fun addTrackPoint(lat: Double, lon: Double, altitude: Double?) = withContext(Dispatchers.IO) {
@@ -118,7 +136,7 @@ class TripRepository private constructor(context: Context) {
         withContext(Dispatchers.IO) {
             val tripId = dbHelper.insertTrip(name, System.currentTimeMillis())
             waypoints.forEachIndexed { index, (lat, lon, alt) ->
-                dbHelper.insertWaypoint(tripId, lat, lon, alt, index, index == 0, System.currentTimeMillis())
+                dbHelper.insertWaypoint(tripId, lat, lon, alt, index, index == 0, false, null, System.currentTimeMillis())
             }
             track.forEach { (lat, lon, alt) ->
                 dbHelper.insertTrackPoint(tripId, lat, lon, alt, System.currentTimeMillis())

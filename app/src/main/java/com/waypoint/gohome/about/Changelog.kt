@@ -1,0 +1,69 @@
+package com.waypoint.gohome.about
+
+data class ChangelogEntry(
+    val version: String,
+    val date: String,
+    val changes: List<String>
+)
+
+/** Hand-maintained release history, shown on the "Historia zmian" screen. Newest first. */
+object Changelog {
+    val entries: List<ChangelogEntry> = listOf(
+        ChangelogEntry(
+            version = "1.4.0",
+            date = "2026-08-17",
+            changes = listOf(
+                "Wersjonowanie aplikacji i ekran z historią zmian"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.3.0",
+            date = "2026-08-16",
+            changes = listOf(
+                "Przycisk „Zlokalizuj mnie” centrujący mapę na aktualnej pozycji",
+                "Poprawiony crash przy próbie pobrania mapy offline",
+                "Trafniejsze komunikaty błędów trasy po drogach (brak internetu / brak trasy / błąd serwera)",
+                "Rozszerzony wybór trybu powrotu: przez waypointy, bezpośrednio do startu lub wybrany punkt",
+                "Ekran „Słońce”: wschód/zachód, odliczanie do zmierzchu, pozycja słońca na żywym kompasie",
+                "Dialog „Aktualna pozycja” ze współrzędnymi GPS i wysokością",
+                "Większy panel i wskaźnik nawigacji powrotnej",
+                "Automatyczny punkt końcowy dodawany po zatrzymaniu nagrywania",
+                "Opis (etykieta) przy ręcznym dodawaniu waypointu",
+                "Zdjęcia przypisane do waypointów"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.2.0",
+            date = "2026-08-11",
+            changes = listOf(
+                "Odświeżony, nowoczesny design: Material 3, tryb ciemny, zaokrąglone, unoszące się panele"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.1.0",
+            date = "2026-08-10",
+            changes = listOf(
+                "Historia tras — wiele zapisanych wypraw",
+                "Eksport i import tras w formacie GPX",
+                "Automatyczne dodawanie waypointów co zadany dystans",
+                "Statystyki na żywo podczas nagrywania: dystans, czas, tempo",
+                "Profil wysokości trasy",
+                "Opcjonalna nakładka trasy po drogach w trybie powrotu",
+                "Wibracja przy dotarciu do waypointu",
+                "Usuwanie pojedynczego waypointu",
+                "Przypomnienie o wyłączeniu optymalizacji baterii przed nagrywaniem",
+                "Udostępnianie aktualnej lokalizacji przez WhatsApp, Signal i SMS"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.0.0",
+            date = "2026-08-10",
+            changes = listOf(
+                "Zaznaczanie aktualnej pozycji na mapie",
+                "Dodawanie waypointów po drodze",
+                "Rysowanie przebytej trasy na żywo podczas nagrywania",
+                "Nawigacja powrotna do punktu startowego lub wybranego punktu"
+            )
+        )
+    )
+}

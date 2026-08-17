@@ -5,6 +5,8 @@ import android.content.ActivityNotFoundException
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.net.Uri
 import android.os.Build
@@ -21,6 +23,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.CheckBox
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -39,6 +42,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.waypoint.gohome.R
+import com.waypoint.gohome.about.ChangelogActivity
 import com.waypoint.gohome.data.GeoUtils
 import com.waypoint.gohome.data.GpxExporter
 import com.waypoint.gohome.data.GpxImporter
@@ -78,6 +82,9 @@ class MainActivity : AppCompatActivity() {
     private var lastHeading: Float = 0f
     private var recording = false
     private var recordingStartTime = 0L
+
+    private var pendingPhotoWaypointId: Long? = null
+    private var pendingPhotoUri: Uri? = null
 
     private lateinit var currentLocationMarker: Marker
     private lateinit var trackPolyline: Polyline
@@ -122,6 +129,17 @@ class MainActivity : AppCompatActivity() {
     private val importGpxLauncher =
         registerForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             if (uri != null) importGpxFrom(uri)
+        }
+
+    private val takePictureLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { success ->
+            val waypointId = pendingPhotoWaypointId
+            val uri = pendingPhotoUri
+            if (success && waypointId != null && uri != null) {
+                viewModel.setWaypointPhoto(waypointId, uri.toString())
+            }
+            pendingPhotoWaypointId = null
+            pendingPhotoUri = null
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -183,7 +201,7 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnAddWaypoint.setOnClickListener {
             withCurrentLocation { location ->
-                viewModel.addWaypoint(location.latitude, location.longitude, altitudeOf(location))
+                promptAddWaypoint(location)
                 centerMap(location)
             }
         }
@@ -245,15 +263,8 @@ class MainActivity : AppCompatActivity() {
             val marker = Marker(binding.mapView).apply {
                 position = GeoPoint(waypoint.latitude, waypoint.longitude)
                 setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                icon = ContextCompat.getDrawable(
-                    this@MainActivity,
-                    if (waypoint.isStart) R.drawable.ic_marker_start else R.drawable.ic_marker_waypoint
-                )
-                title = if (waypoint.isStart) {
-                    getString(R.string.label_start)
-                } else {
-                    getString(R.string.label_waypoint, waypoint.sequence)
-                }
+                icon = ContextCompat.getDrawable(this@MainActivity, waypointIconRes(waypoint))
+                title = waypointLabel(waypoint)
                 setOnMarkerClickListener { _, _ ->
                     showWaypointDialog(waypoint)
                     true
@@ -263,6 +274,41 @@ class MainActivity : AppCompatActivity() {
             binding.mapView.overlays.add(marker)
         }
         binding.mapView.invalidate()
+    }
+
+    private fun waypointIconRes(waypoint: Waypoint): Int = when {
+        waypoint.isEnd -> R.drawable.ic_marker_end
+        waypoint.isStart -> R.drawable.ic_marker_start
+        else -> R.drawable.ic_marker_waypoint
+    }
+
+    private fun waypointLabel(waypoint: Waypoint): String = when {
+        waypoint.isEnd -> getString(R.string.label_end)
+        waypoint.isStart -> getString(R.string.label_start)
+        !waypoint.label.isNullOrBlank() -> waypoint.label
+        else -> getString(R.string.label_waypoint, waypoint.sequence)
+    }
+
+    private fun promptAddWaypoint(location: Location) {
+        val editText = EditText(this).apply {
+            hint = getString(R.string.hint_waypoint_label)
+            inputType = InputType.TYPE_CLASS_TEXT
+        }
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (16 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad, pad, 0)
+            addView(editText)
+        }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.btn_add_waypoint)
+            .setView(container)
+            .setPositiveButton(R.string.btn_add_waypoint) { _, _ ->
+                val label = editText.text.toString().trim().ifBlank { null }
+                viewModel.addWaypoint(location.latitude, location.longitude, altitudeOf(location), label)
+            }
+            .setNegativeButton(R.string.menu_cancel, null)
+            .show()
     }
 
     private fun showReturnModeDialog() {
@@ -286,9 +332,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showChooseTargetDialog() {
         val sortedWaypoints = viewModel.waypoints.value.sortedBy { it.sequence }
-        val labels = sortedWaypoints.map {
-            if (it.isStart) getString(R.string.label_start) else getString(R.string.label_waypoint, it.sequence)
-        }.toTypedArray()
+        val labels = sortedWaypoints.map { waypointLabel(it) }.toTypedArray()
         AlertDialog.Builder(this)
             .setTitle(R.string.title_choose_target)
             .setItems(labels) { _, which ->
@@ -298,25 +342,76 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showWaypointDialog(waypoint: Waypoint) {
-        val title = if (waypoint.isStart) getString(R.string.label_start) else getString(R.string.label_waypoint, waypoint.sequence)
-        AlertDialog.Builder(this)
-            .setTitle(title)
-            .setItems(
-                arrayOf(
-                    getString(R.string.menu_set_as_target),
-                    getString(R.string.menu_delete_waypoint),
-                    getString(R.string.menu_cancel)
-                )
-            ) { _, which ->
-                when (which) {
-                    0 -> {
-                        viewModel.enterReturnMode(targetWaypointId = waypoint.id)
-                        toast(getString(R.string.msg_target_set))
-                    }
-                    1 -> viewModel.deleteWaypoint(waypoint.id)
-                }
+        val actions = mutableListOf<Pair<String, () -> Unit>>()
+        actions.add(getString(R.string.menu_set_as_target) to {
+            viewModel.enterReturnMode(targetWaypointId = waypoint.id)
+            toast(getString(R.string.msg_target_set))
+        })
+        val photoUri = waypoint.photoUri
+        if (photoUri != null) {
+            actions.add(getString(R.string.menu_view_photo) to { showPhoto(photoUri) })
+        }
+        actions.add(
+            getString(if (photoUri != null) R.string.menu_retake_photo else R.string.menu_add_photo) to {
+                capturePhotoFor(waypoint.id)
             }
+        )
+        actions.add(getString(R.string.menu_delete_waypoint) to { viewModel.deleteWaypoint(waypoint.id) })
+
+        AlertDialog.Builder(this)
+            .setTitle(waypointLabel(waypoint))
+            .setItems(actions.map { it.first }.toTypedArray()) { _, which -> actions[which].second() }
+            .setNegativeButton(R.string.menu_cancel, null)
             .show()
+    }
+
+    private fun capturePhotoFor(waypointId: Long) {
+        val photoFile = createPhotoFile()
+        val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", photoFile)
+        pendingPhotoWaypointId = waypointId
+        pendingPhotoUri = uri
+        try {
+            takePictureLauncher.launch(uri)
+        } catch (_: ActivityNotFoundException) {
+            toast(getString(R.string.msg_camera_unavailable))
+            pendingPhotoWaypointId = null
+            pendingPhotoUri = null
+        }
+    }
+
+    private fun createPhotoFile(): File {
+        val dir = File(filesDir, "photos").apply { mkdirs() }
+        return File(dir, "waypoint_${System.currentTimeMillis()}.jpg")
+    }
+
+    private fun showPhoto(uriString: String) {
+        val bitmap = loadScaledBitmap(Uri.parse(uriString), maxDimension = 1600)
+        if (bitmap == null) {
+            toast(getString(R.string.msg_photo_load_failed))
+            return
+        }
+        val imageView = ImageView(this).apply {
+            adjustViewBounds = true
+            scaleType = ImageView.ScaleType.FIT_CENTER
+            setImageBitmap(bitmap)
+        }
+        AlertDialog.Builder(this)
+            .setView(imageView)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+    private fun loadScaledBitmap(uri: Uri, maxDimension: Int): Bitmap? = try {
+        val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+        contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }
+        var sampleSize = 1
+        while (bounds.outWidth / sampleSize > maxDimension || bounds.outHeight / sampleSize > maxDimension) {
+            sampleSize *= 2
+        }
+        val decodeOptions = BitmapFactory.Options().apply { inSampleSize = sampleSize }
+        contentResolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, decodeOptions) }
+    } catch (_: Exception) {
+        null
     }
 
     private fun updateReturnPanelVisibility(active: Boolean) {
@@ -547,6 +642,10 @@ class MainActivity : AppCompatActivity() {
         binding.btnRecord.text = getString(R.string.btn_record_start)
         binding.statsBar.visibility = android.view.View.GONE
         statsHandler.removeCallbacks(statsRunnable)
+
+        lastLocation?.let { location ->
+            viewModel.addEndWaypoint(location.latitude, location.longitude, altitudeOf(location))
+        }
     }
 
     private fun showAutoWaypointDialog() {
@@ -876,6 +975,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_sun_info -> {
                 openSunInfo()
+                return true
+            }
+            R.id.action_changelog -> {
+                startActivity(Intent(this, ChangelogActivity::class.java))
                 return true
             }
         }

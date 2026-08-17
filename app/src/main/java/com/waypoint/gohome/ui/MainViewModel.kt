@@ -41,8 +41,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun addWaypoint(lat: Double, lon: Double, altitude: Double?) = viewModelScope.launch {
-        repository.addWaypoint(lat, lon, altitude)
+    fun addWaypoint(lat: Double, lon: Double, altitude: Double?, label: String? = null) = viewModelScope.launch {
+        repository.addWaypoint(lat, lon, altitude, label)
+    }
+
+    fun addEndWaypoint(lat: Double, lon: Double, altitude: Double?) = viewModelScope.launch {
+        repository.addEndWaypoint(lat, lon, altitude)
+    }
+
+    fun setWaypointPhoto(waypointId: Long, photoUri: String?) = viewModelScope.launch {
+        repository.setWaypointPhoto(waypointId, photoUri)
     }
 
     fun deleteWaypoint(waypointId: Long) = viewModelScope.launch {

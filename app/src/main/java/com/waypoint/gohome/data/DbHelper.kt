@@ -28,6 +28,9 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
                 altitude REAL,
                 sequence INTEGER NOT NULL,
                 isStart INTEGER NOT NULL,
+                isEnd INTEGER NOT NULL DEFAULT 0,
+                label TEXT,
+                photoUri TEXT,
                 timestamp INTEGER NOT NULL
             )
             """.trimIndent()
@@ -92,7 +95,17 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
         }
     }
 
-    fun insertWaypoint(tripId: Long, latitude: Double, longitude: Double, altitude: Double?, sequence: Int, isStart: Boolean, timestamp: Long): Long {
+    fun insertWaypoint(
+        tripId: Long,
+        latitude: Double,
+        longitude: Double,
+        altitude: Double?,
+        sequence: Int,
+        isStart: Boolean,
+        isEnd: Boolean,
+        label: String?,
+        timestamp: Long
+    ): Long {
         val values = ContentValues().apply {
             put("tripId", tripId)
             put("latitude", latitude)
@@ -100,6 +113,8 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
             if (altitude != null) put("altitude", altitude) else putNull("altitude")
             put("sequence", sequence)
             put("isStart", if (isStart) 1 else 0)
+            put("isEnd", if (isEnd) 1 else 0)
+            if (label != null) put("label", label) else putNull("label")
             put("timestamp", timestamp)
         }
         return writableDatabase.insert(TABLE_WAYPOINTS, null, values)
@@ -107,6 +122,13 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
 
     fun deleteWaypoint(waypointId: Long) {
         writableDatabase.delete(TABLE_WAYPOINTS, "id = ?", arrayOf(waypointId.toString()))
+    }
+
+    fun updateWaypointPhoto(waypointId: Long, photoUri: String?) {
+        val values = ContentValues().apply {
+            if (photoUri != null) put("photoUri", photoUri) else putNull("photoUri")
+        }
+        writableDatabase.update(TABLE_WAYPOINTS, values, "id = ?", arrayOf(waypointId.toString()))
     }
 
     fun insertTrackPoint(tripId: Long, latitude: Double, longitude: Double, altitude: Double?, timestamp: Long): Long {
@@ -123,7 +145,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
     fun queryWaypoints(tripId: Long): List<Waypoint> {
         val result = mutableListOf<Waypoint>()
         readableDatabase.rawQuery(
-            "SELECT id, tripId, latitude, longitude, altitude, sequence, isStart, timestamp FROM $TABLE_WAYPOINTS WHERE tripId = ? ORDER BY sequence ASC",
+            "SELECT id, tripId, latitude, longitude, altitude, sequence, isStart, isEnd, label, photoUri, timestamp FROM $TABLE_WAYPOINTS WHERE tripId = ? ORDER BY sequence ASC",
             arrayOf(tripId.toString())
         ).use { cursor ->
             while (cursor.moveToNext()) {
@@ -136,7 +158,10 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
                         altitude = cursor.getNullableDouble(4),
                         sequence = cursor.getInt(5),
                         isStart = cursor.getInt(6) != 0,
-                        timestamp = cursor.getLong(7)
+                        isEnd = cursor.getInt(7) != 0,
+                        label = if (cursor.isNull(8)) null else cursor.getString(8),
+                        photoUri = if (cursor.isNull(9)) null else cursor.getString(9),
+                        timestamp = cursor.getLong(10)
                     )
                 )
             }
@@ -177,7 +202,7 @@ class DbHelper(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, DB_V
 
     companion object {
         private const val DB_NAME = "waypoint_go_home.db"
-        private const val DB_VERSION = 2
+        private const val DB_VERSION = 5
         private const val TABLE_TRIPS = "trips"
         private const val TABLE_WAYPOINTS = "waypoints"
         private const val TABLE_TRACK_POINTS = "track_points"

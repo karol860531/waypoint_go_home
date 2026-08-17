@@ -3,6 +3,7 @@
 
     <string name="btn_mark_position">Zaznacz pozycję</string>
     <string name="btn_add_waypoint">Dodaj waypoint</string>
+    <string name="hint_waypoint_label">Opis (opcjonalnie)</string>
     <string name="btn_record_start">Nagrywaj trasę</string>
     <string name="btn_record_stop">Zatrzymaj nagrywanie</string>
     <string name="btn_return">Prowadź z powrotem</string>
@@ -21,6 +22,7 @@
     <string name="msg_target_set">Ustawiono jako cel powrotu</string>
 
     <string name="label_start">Start</string>
+    <string name="label_end">Koniec</string>
     <string name="label_waypoint">Waypoint %1$d</string>
     <string name="label_target_prefix">Cel: %1$s</string>
     <string name="label_distance_m">%1$d m</string>
@@ -29,8 +31,14 @@
     <string name="menu_set_as_target">Ustaw jako cel powrotu</string>
     <string name="menu_delete_waypoint">Usuń waypoint</string>
     <string name="menu_cancel">Anuluj</string>
+    <string name="menu_add_photo">Dodaj zdjęcie</string>
+    <string name="menu_retake_photo">Zmień zdjęcie</string>
+    <string name="menu_view_photo">Zobacz zdjęcie</string>
+    <string name="msg_camera_unavailable">Nie znaleziono aplikacji aparatu</string>
+    <string name="msg_photo_load_failed">Nie udało się wczytać zdjęcia</string>
 
     <string name="menu_trip_history">Historia tras</string>
+    <string name="menu_changelog">Historia zmian</string>
     <string name="menu_export_gpx">Eksportuj GPX</string>
     <string name="menu_import_gpx">Importuj GPX</string>
     <string name="menu_offline_map">Pobierz mapę offline</string>
@@ -43,6 +51,8 @@
     <string name="msg_auto_waypoint_disabled">Auto-waypoint wyłączony</string>
 
     <string name="title_trip_history">Historia tras</string>
+    <string name="title_changelog">Historia zmian</string>
+    <string name="label_installed_version">Zainstalowana wersja: %1$s</string>
     <string name="trip_item_points">%1$d punktów • %2$s</string>
     <string name="action_delete_trip">Usuń trasę</string>
     <string name="confirm_delete_trip">Usunąć tę trasę? Tej operacji nie można cofnąć.</string>

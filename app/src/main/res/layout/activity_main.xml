@@ -108,7 +108,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="14dp">
+            android:padding="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -118,8 +118,8 @@
 
                 <ImageView
                     android:id="@+id/navArrow"
-                    android:layout_width="44dp"
-                    android:layout_height="44dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
                     android:src="@drawable/ic_nav_arrow"
                     app:tint="@color/secondary"
                     android:contentDescription="@null" />
@@ -128,7 +128,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:layout_marginStart="12dp"
+                    android:layout_marginStart="16dp"
                     android:orientation="vertical">
 
                     <TextView
@@ -137,15 +137,17 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/on_surface"
                         android:textStyle="bold"
-                        android:textSize="16sp"
+                        android:textSize="20sp"
                         tools:text="Cel: Waypoint 2" />
 
                     <TextView
                         android:id="@+id/navDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
                         android:textColor="@color/on_surface_variant"
-                        android:textSize="14sp"
+                        android:textStyle="bold"
+                        android:textSize="22sp"
                         tools:text="120 m" />
                 </LinearLayout>
 
@@ -161,7 +163,7 @@
                 android:id="@+id/checkRoadRouting"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="8dp"
                 android:textColor="@color/on_surface_variant"
                 android:text="@string/label_routing_toggle" />
 

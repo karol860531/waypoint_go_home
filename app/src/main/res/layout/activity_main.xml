@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary_dark"
+        android:background="@color/primary"
         android:theme="@style/ThemeOverlay.WaypointGoHome.Toolbar"
         android:elevation="4dp"
         app:title="@string/app_name"
@@ -19,16 +19,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.waypoint.gohome.ui.BlueprintCard
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/statsBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="12dp"
-        android:background="@color/surface"
-        android:elevation="2dp"
         android:visibility="gone"
         tools:visibility="visible"
+        app:cardBackgroundColor="@color/primary"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="3dp"
+        app:strokeWidth="0dp"
         app:layout_constraintTop_toBottomOf="@id/toolbar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -37,8 +39,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="12dp">
+            android:paddingHorizontal="8dp"
+            android:paddingVertical="10dp">
 
             <TextView
                 android:id="@+id/statDistance"
@@ -46,9 +48,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:fontFamily="@font/barlow_condensed"
-                android:textColor="@color/on_surface"
-                android:textSize="18sp"
+                android:textColor="@color/on_primary"
+                android:textStyle="bold"
+                android:textSize="15sp"
                 tools:text="1.24 km" />
 
             <TextView
@@ -57,9 +59,9 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:fontFamily="@font/barlow_condensed"
-                android:textColor="@color/on_surface"
-                android:textSize="18sp"
+                android:textColor="@color/on_primary"
+                android:textStyle="bold"
+                android:textSize="15sp"
                 tools:text="00:12:34" />
 
             <TextView
@@ -68,13 +70,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
-                android:fontFamily="@font/barlow_condensed"
-                android:textColor="@color/on_surface"
-                android:textSize="18sp"
+                android:textColor="@color/on_primary"
+                android:textStyle="bold"
+                android:textSize="15sp"
                 tools:text="10:05 /km" />
 
         </LinearLayout>
-    </com.waypoint.gohome.ui.BlueprintCard>
+    </com.google.android.material.card.MaterialCardView>
 
     <org.osmdroid.views.MapView
         android:id="@+id/mapView"
@@ -86,16 +88,18 @@
         app:layout_constraintBottom_toTopOf="@id/controlBar" />
 
     <!-- Return navigation panel, hidden until "return mode" is active -->
-    <com.waypoint.gohome.ui.BlueprintCard
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/navPanel"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginTop="12dp"
-        android:background="@color/surface"
-        android:elevation="4dp"
         android:visibility="gone"
         tools:visibility="visible"
+        app:cardBackgroundColor="@color/surface"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="6dp"
+        app:strokeWidth="0dp"
         app:layout_constraintTop_toBottomOf="@id/statsBar"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -114,10 +118,10 @@
 
                 <ImageView
                     android:id="@+id/navArrow"
-                    android:layout_width="88dp"
-                    android:layout_height="88dp"
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
                     android:src="@drawable/ic_nav_arrow"
-                    app:tint="@color/primary"
+                    app:tint="@color/secondary"
                     android:contentDescription="@null" />
 
                 <LinearLayout
@@ -132,16 +136,18 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:textColor="@color/on_surface"
-                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:textSize="20sp"
                         tools:text="Cel: Waypoint 2" />
 
                     <TextView
                         android:id="@+id/navDistance"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/barlow_condensed"
-                        android:textColor="@color/primary"
-                        android:textSize="30sp"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/on_surface_variant"
+                        android:textStyle="bold"
+                        android:textSize="22sp"
                         tools:text="120 m" />
                 </LinearLayout>
 
@@ -162,7 +168,7 @@
                 android:text="@string/label_routing_toggle" />
 
         </LinearLayout>
-    </com.waypoint.gohome.ui.BlueprintCard>
+    </com.google.android.material.card.MaterialCardView>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/btnLocateMe"
@@ -171,19 +177,20 @@
         android:layout_margin="16dp"
         android:contentDescription="@string/btn_locate_me"
         android:src="@android:drawable/ic_menu_mylocation"
-        app:shapeAppearance="@style/ShapeAppearance.WaypointGoHome.Square"
-        app:backgroundTint="@color/primary"
-        app:tint="@color/on_primary"
+        app:backgroundTint="@color/secondary"
+        app:tint="@color/on_secondary"
         app:layout_constraintBottom_toTopOf="@id/controlBar"
         app:layout_constraintEnd_toEndOf="parent" />
 
-    <com.waypoint.gohome.ui.BlueprintCard
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/mapCompassCard"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="64dp"
+        android:layout_height="64dp"
         android:layout_margin="16dp"
-        android:background="@color/surface"
-        android:elevation="3dp"
+        app:cardCornerRadius="32dp"
+        app:cardElevation="4dp"
+        app:cardBackgroundColor="@color/surface"
+        app:strokeWidth="0dp"
         app:layout_constraintBottom_toTopOf="@id/controlBar"
         app:layout_constraintStart_toStartOf="parent">
 
@@ -191,18 +198,20 @@
             android:id="@+id/mapCompass"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:padding="8dp"
+            android:padding="6dp"
             android:contentDescription="@string/menu_compass" />
-    </com.waypoint.gohome.ui.BlueprintCard>
+    </com.google.android.material.card.MaterialCardView>
 
-    <com.waypoint.gohome.ui.BlueprintCard
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/controlBar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="12dp"
         android:layout_marginBottom="12dp"
-        android:background="@color/surface"
-        android:elevation="6dp"
+        app:cardBackgroundColor="@color/surface"
+        app:cardCornerRadius="22dp"
+        app:cardElevation="8dp"
+        app:strokeWidth="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
@@ -220,7 +229,7 @@
 
                 <Button
                     android:id="@+id/btnMarkPosition"
-                    style="@style/Widget.WaypointGoHome.Button.Outlined"
+                    style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -230,7 +239,7 @@
 
                 <Button
                     android:id="@+id/btnAddWaypoint"
-                    style="@style/Widget.WaypointGoHome.Button.Outlined"
+                    style="@style/Widget.Material3.Button.TonalButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -246,7 +255,7 @@
 
                 <Button
                     android:id="@+id/btnRecord"
-                    style="@style/Widget.WaypointGoHome.Button"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -256,16 +265,17 @@
 
                 <Button
                     android:id="@+id/btnReturn"
-                    style="@style/Widget.WaypointGoHome.Button.Outlined"
+                    style="@style/Widget.Material3.Button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_margin="4dp"
                     android:textSize="14sp"
+                    android:backgroundTint="@color/secondary"
                     android:text="@string/btn_return" />
             </LinearLayout>
 
         </LinearLayout>
-    </com.waypoint.gohome.ui.BlueprintCard>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

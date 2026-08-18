@@ -3,9 +3,7 @@ package com.waypoint.gohome.history
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.waypoint.gohome.R
 import com.waypoint.gohome.databinding.ItemTripBinding
 
 data class TripListItem(
@@ -38,11 +36,7 @@ class TripAdapter(
         holder.binding.tripName.text = item.dateText
         holder.binding.tripSummary.text = item.summaryText
         holder.binding.currentBadge.visibility = if (item.isCurrent) View.VISIBLE else View.GONE
-        val context = holder.binding.root.context
-        holder.binding.root.bracketColor = ContextCompat.getColor(
-            context,
-            if (item.isCurrent) R.color.primary else R.color.outline
-        )
+        holder.binding.root.strokeWidth = if (item.isCurrent) 4 else 0
         holder.binding.root.setOnClickListener { onOpen(item) }
         holder.binding.btnDeleteTrip.setOnClickListener { onDelete(item) }
     }

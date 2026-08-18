@@ -10,18 +10,6 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
-            version = "2.0.0",
-            date = "2026-08-18",
-            changes = listOf(
-                "Nowy design: jeden stalowy akcent, kwadratowe rogi, narożne \"uchwyty\" na kartach",
-                "Kondensowana czcionka (Barlow Condensed) dla liczb i nagłówków",
-                "Przeprojektowane markery na mapie: kwadrat startu, pierścień waypointu, cel z kropką",
-                "Przerywana linia trasy i nakładki tras w stylu schematu technicznego",
-                "Duotonowy filtr kolorów na kafelkach mapy",
-                "Odświeżony dialog wyboru trybu powrotu, historia tras i changelog w nowym stylu"
-            )
-        ),
-        ChangelogEntry(
             version = "1.7.0",
             date = "2026-08-17",
             changes = listOf(

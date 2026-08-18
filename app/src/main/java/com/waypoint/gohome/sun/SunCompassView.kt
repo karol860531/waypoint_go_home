@@ -31,35 +31,33 @@ class SunCompassView(context: Context, attrs: AttributeSet? = null) : View(conte
     private var hasData = false
 
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#DADFE2")
+        color = Color.parseColor("#BDBDBD")
         style = Paint.Style.STROKE
-        strokeWidth = 2f
+        strokeWidth = 3f
     }
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#5C6670")
+        color = Color.parseColor("#616161")
         textSize = 36f
         textAlign = Paint.Align.CENTER
     }
     private val pointerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1B3A4D")
+        color = Color.parseColor("#2E7D32")
         style = Paint.Style.FILL
     }
     private val sunrisePaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#3E6B85")
-        style = Paint.Style.STROKE
-        strokeWidth = 3f
+        color = Color.parseColor("#FFB300")
+        style = Paint.Style.FILL
     }
     private val sunsetPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#8A96A0")
-        style = Paint.Style.STROKE
-        strokeWidth = 3f
+        color = Color.parseColor("#E64A19")
+        style = Paint.Style.FILL
     }
     private val sunPaintDay = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#3E6B85")
+        color = Color.parseColor("#FDD835")
         style = Paint.Style.FILL
     }
     private val sunPaintNight = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#8A96A0")
+        color = Color.parseColor("#90A4AE")
         style = Paint.Style.FILL
     }
 

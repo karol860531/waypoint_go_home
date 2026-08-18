@@ -25,32 +25,32 @@ class CompassView(context: Context, attrs: AttributeSet? = null) : View(context,
         }
 
     private val ringPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#DADFE2")
+        color = Color.parseColor("#BDBDBD")
         style = Paint.Style.STROKE
-        strokeWidth = 3f
+        strokeWidth = 4f
     }
     private val tickPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#8A96A0")
+        color = Color.parseColor("#9E9E9E")
         strokeWidth = 3f
     }
     private val labelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#5C6670")
+        color = Color.parseColor("#616161")
         textAlign = Paint.Align.CENTER
     }
     private val northLabelPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#3E6B85")
+        color = Color.parseColor("#C62828")
         textAlign = Paint.Align.CENTER
     }
     private val needleNorthPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#3E6B85")
+        color = Color.parseColor("#C62828")
         style = Paint.Style.FILL
     }
     private val needleSouthPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#8A96A0")
+        color = Color.parseColor("#B0BEC5")
         style = Paint.Style.FILL
     }
     private val centerPaint = Paint(Paint.ANTI_ALIAS_FLAG).apply {
-        color = Color.parseColor("#1B3A4D")
+        color = Color.parseColor("#616161")
         style = Paint.Style.FILL
     }
 

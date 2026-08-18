@@ -60,7 +60,7 @@
     <string name="label_installed_version">Zainstalowana wersja: %1$s</string>
     <string name="trip_item_points">%1$d punktów • %2$s</string>
     <string name="action_delete_trip">Usuń trasę</string>
-    <string name="label_current_trip">● Aktualna trasa</string>
+    <string name="label_current_trip">AKTUALNA TRASA</string>
     <string name="confirm_delete_trip">Usunąć tę trasę? Tej operacji nie można cofnąć.</string>
     <string name="btn_delete">Usuń</string>
     <string name="msg_no_trips">Brak zapisanych tras</string>

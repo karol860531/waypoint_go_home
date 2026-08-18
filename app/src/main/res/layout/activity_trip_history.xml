@@ -9,7 +9,7 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
+        android:background="@color/primary_dark"
         android:theme="@style/ThemeOverlay.WaypointGoHome.Toolbar"
         android:elevation="4dp"
         app:title="@string/title_trip_history"

@@ -10,7 +10,7 @@
         android:id="@+id/toolbar"
         android:layout_width="0dp"
         android:layout_height="?attr/actionBarSize"
-        android:background="@color/primary"
+        android:background="@color/primary_dark"
         android:theme="@style/ThemeOverlay.WaypointGoHome.Toolbar"
         android:elevation="4dp"
         app:title="@string/title_sun_info"
@@ -33,13 +33,11 @@
             android:orientation="vertical"
             android:padding="16dp">
 
-            <com.google.android.material.card.MaterialCardView
+            <com.waypoint.gohome.ui.BlueprintCard
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surface"
-                app:cardCornerRadius="18dp"
-                app:cardElevation="2dp"
-                app:strokeWidth="0dp">
+                android:background="@color/surface"
+                android:elevation="2dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -70,9 +68,9 @@
                                 android:id="@+id/sunriseTime"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/barlow_condensed"
                                 android:textColor="@color/on_surface"
-                                android:textStyle="bold"
-                                android:textSize="22sp"
+                                android:textSize="26sp"
                                 tools:text="05:21" />
                         </LinearLayout>
 
@@ -94,9 +92,9 @@
                                 android:id="@+id/sunsetTime"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:fontFamily="@font/barlow_condensed"
                                 android:textColor="@color/on_surface"
-                                android:textStyle="bold"
-                                android:textSize="22sp"
+                                android:textSize="26sp"
                                 tools:text="20:01" />
                         </LinearLayout>
                     </LinearLayout>
@@ -107,13 +105,13 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="12dp"
                         android:gravity="center"
-                        android:textColor="@color/secondary"
+                        android:textColor="@color/primary"
                         android:textStyle="bold"
                         android:textSize="16sp"
                         tools:text="Zmierzch za 3h 40min" />
 
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </com.waypoint.gohome.ui.BlueprintCard>
 
             <com.waypoint.gohome.sun.SunCompassView
                 android:id="@+id/sunCompass"

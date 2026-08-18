@@ -10,13 +10,30 @@
         <item name="colorOutline">@color/outline</item>
         <item name="android:colorBackground">@color/background</item>
         <item name="android:statusBarColor" tools:targetApi="l">@color/primary_dark</item>
+        <item name="shapeAppearanceSmallComponent">@style/ShapeAppearance.WaypointGoHome.Square</item>
+        <item name="shapeAppearanceMediumComponent">@style/ShapeAppearance.WaypointGoHome.Square</item>
+        <item name="shapeAppearanceLargeComponent">@style/ShapeAppearance.WaypointGoHome.Square</item>
+        <item name="materialButtonStyle">@style/Widget.WaypointGoHome.Button</item>
     </style>
 
     <style name="ThemeOverlay.WaypointGoHome.Toolbar" parent="ThemeOverlay.Material3.Dark.ActionBar" />
 
-    <style name="ShapeAppearance.WaypointGoHome.Card" parent="ShapeAppearance.Material3.Corner.Large">
-        <item name="cornerSize">20dp</item>
+    <style name="ShapeAppearance.WaypointGoHome.Square" parent="ShapeAppearance.Material3.Corner.None">
+        <item name="cornerSize">0dp</item>
     </style>
 
-    <style name="ShapeAppearance.WaypointGoHome.Button" parent="ShapeAppearance.Material3.Corner.Full" />
+    <style name="Widget.WaypointGoHome.Button" parent="Widget.Material3.Button">
+        <item name="shapeAppearance">@style/ShapeAppearance.WaypointGoHome.Square</item>
+    </style>
+
+    <style name="Widget.WaypointGoHome.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="shapeAppearance">@style/ShapeAppearance.WaypointGoHome.Square</item>
+        <item name="strokeColor">@color/outline</item>
+        <item name="android:textColor">@color/on_surface</item>
+    </style>
+
+    <style name="TextAppearance.WaypointGoHome.Heading" parent="android:TextAppearance">
+        <item name="android:fontFamily">@font/barlow_condensed</item>
+        <item name="android:textFontWeight" tools:targetApi="p">600</item>
+    </style>
 </resources>

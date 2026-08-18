@@ -1,16 +1,15 @@
 package com.waypoint.gohome.about
 
 import android.content.pm.PackageManager
-import android.graphics.Typeface
 import android.os.Bundle
 import android.view.Gravity
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.android.material.card.MaterialCardView
 import com.waypoint.gohome.R
 import com.waypoint.gohome.databinding.ActivityChangelogBinding
+import com.waypoint.gohome.ui.BlueprintCard
 
 class ChangelogActivity : AppCompatActivity() {
 
@@ -38,18 +37,18 @@ class ChangelogActivity : AppCompatActivity() {
         val cardMargin = (12 * density).toInt()
         val cardPadding = (16 * density).toInt()
 
-        Changelog.entries.forEach { entry ->
-            val card = MaterialCardView(this).apply {
+        Changelog.entries.forEachIndexed { index, entry ->
+            val isLatest = index == 0
+
+            val card = BlueprintCard(this).apply {
                 layoutParams = LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
                     LinearLayout.LayoutParams.WRAP_CONTENT
                 ).apply {
                     setMargins(cardMargin, cardMargin / 2, cardMargin, cardMargin / 2)
                 }
-                radius = 16 * density
-                cardElevation = density
-                strokeWidth = 0
-                setCardBackgroundColor(color(R.color.surface))
+                elevation = density
+                setBackgroundColor(color(R.color.surface))
             }
 
             val content = LinearLayout(this).apply {
@@ -64,10 +63,9 @@ class ChangelogActivity : AppCompatActivity() {
             headerRow.addView(
                 TextView(this).apply {
                     text = "v${entry.version}"
-                    textSize = 17f
-                    setTypeface(typeface, Typeface.BOLD)
-                    setTextColor(color(R.color.on_surface))
-                    layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+                    textSize = 13f
+                    setBackgroundResource(if (isLatest) R.drawable.bg_tag_accent else R.drawable.bg_tag_outline)
+                    setTextColor(color(if (isLatest) R.color.primary else R.color.on_surface_variant))
                 }
             )
             headerRow.addView(
@@ -75,6 +73,9 @@ class ChangelogActivity : AppCompatActivity() {
                     text = entry.date
                     textSize = 13f
                     setTextColor(color(R.color.on_surface_variant))
+                    val marginParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT)
+                    marginParams.marginStart = (8 * density).toInt()
+                    layoutParams = marginParams
                 }
             )
             content.addView(headerRow)
@@ -82,10 +83,10 @@ class ChangelogActivity : AppCompatActivity() {
             entry.changes.forEach { change ->
                 content.addView(
                     TextView(this).apply {
-                        text = "•  $change"
+                        text = "—  $change"
                         textSize = 14f
                         setTextColor(color(R.color.on_surface_variant))
-                        setPadding(0, (6 * density).toInt(), 0, 0)
+                        setPadding(0, (8 * density).toInt(), 0, 0)
                     }
                 )
             }

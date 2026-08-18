@@ -193,16 +193,28 @@ class MainActivity : AppCompatActivity() {
         binding.mapView.controller.setZoom(16.0)
         binding.mapView.controller.setCenter(GeoPoint(52.2297, 21.0122)) // Warsaw, until we get a fix
 
+        // Steel-toned duotone filter over the map tiles, matching the app's blueprint aesthetic.
+        val duotoneMatrix = android.graphics.ColorMatrix(
+            floatArrayOf(
+                0.33f, 0.33f, 0.33f, 0f, 10f,
+                0.33f, 0.33f, 0.33f, 0f, 20f,
+                0.39f, 0.39f, 0.39f, 0f, 45f,
+                0f, 0f, 0f, 1f, 0f
+            )
+        )
+        binding.mapView.overlayManager.tilesOverlay.setColorFilter(android.graphics.ColorMatrixColorFilter(duotoneMatrix))
+
         trackPolyline = Polyline(binding.mapView).apply {
             outlinePaint.color = ContextCompat.getColor(this@MainActivity, R.color.track_line)
-            outlinePaint.strokeWidth = 8f
+            outlinePaint.strokeWidth = 5f
+            outlinePaint.pathEffect = android.graphics.DashPathEffect(floatArrayOf(16f, 10f), 0f)
         }
         binding.mapView.overlays.add(trackPolyline)
 
         routePolyline = Polyline(binding.mapView).apply {
-            outlinePaint.color = ContextCompat.getColor(this@MainActivity, R.color.marker_target)
-            outlinePaint.strokeWidth = 6f
-            outlinePaint.pathEffect = android.graphics.DashPathEffect(floatArrayOf(20f, 15f), 0f)
+            outlinePaint.color = ContextCompat.getColor(this@MainActivity, R.color.primary)
+            outlinePaint.strokeWidth = 5f
+            outlinePaint.pathEffect = android.graphics.DashPathEffect(floatArrayOf(6f, 8f), 0f)
         }
         binding.mapView.overlays.add(routePolyline)
 
@@ -288,7 +300,7 @@ class MainActivity : AppCompatActivity() {
         waypoints.forEach { waypoint ->
             val marker = Marker(binding.mapView).apply {
                 position = GeoPoint(waypoint.latitude, waypoint.longitude)
-                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+                setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
                 icon = ContextCompat.getDrawable(this@MainActivity, waypointIconRes(waypoint))
                 title = waypointLabel(waypoint)
                 setOnMarkerClickListener { _, _ ->
@@ -360,7 +372,11 @@ class MainActivity : AppCompatActivity() {
     /** A list dialog where each row shows a bold label plus a smaller explanatory subtitle. */
     private fun showTwoLineOptionsDialog(title: String, options: List<Triple<String, String, () -> Unit>>) {
         val density = resources.displayMetrics.density
-        val container = LinearLayout(this).apply { orientation = LinearLayout.VERTICAL }
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (4 * density).toInt()
+            setPadding(pad, pad, pad, pad)
+        }
 
         val dialog = MaterialAlertDialogBuilder(this)
             .setTitle(title)
@@ -369,14 +385,22 @@ class MainActivity : AppCompatActivity() {
             .create()
 
         options.forEach { (label, subtitle, action) ->
+            val card = BlueprintCard(this).apply {
+                layoutParams = LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+                ).apply { setMargins(0, (4 * density).toInt(), 0, (4 * density).toInt()) }
+                setBackgroundColor(color(R.color.surface))
+            }
             val row = LinearLayout(this).apply {
-                orientation = LinearLayout.VERTICAL
+                orientation = LinearLayout.HORIZONTAL
+                gravity = android.view.Gravity.CENTER_VERTICAL
                 isClickable = true
                 isFocusable = true
                 val outValue = android.util.TypedValue()
                 theme.resolveAttribute(android.R.attr.selectableItemBackground, outValue, true)
                 setBackgroundResource(outValue.resourceId)
-                val padH = (20 * density).toInt()
+                val padH = (16 * density).toInt()
                 val padV = (14 * density).toInt()
                 setPadding(padH, padV, padH, padV)
                 setOnClickListener {
@@ -384,23 +408,37 @@ class MainActivity : AppCompatActivity() {
                     action()
                 }
             }
-            row.addView(
+            val texts = LinearLayout(this).apply {
+                orientation = LinearLayout.VERTICAL
+                layoutParams = LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f)
+            }
+            texts.addView(
                 TextView(this).apply {
                     text = label
-                    textSize = 16f
+                    textSize = 15f
                     setTextColor(color(R.color.on_surface))
                     setTypeface(typeface, android.graphics.Typeface.BOLD)
                 }
             )
-            row.addView(
+            texts.addView(
                 TextView(this).apply {
                     text = subtitle
-                    textSize = 13f
+                    textSize = 12.5f
                     setTextColor(color(R.color.on_surface_variant))
                     setPadding(0, (2 * density).toInt(), 0, 0)
                 }
             )
-            container.addView(row)
+            row.addView(texts)
+            row.addView(
+                TextView(this).apply {
+                    text = "›"
+                    textSize = 20f
+                    setTextColor(color(R.color.on_surface_variant))
+                    setPadding((8 * density).toInt(), 0, 0, 0)
+                }
+            )
+            card.addView(row)
+            container.addView(card)
         }
         dialog.show()
     }

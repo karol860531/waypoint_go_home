@@ -1,17 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.waypoint.gohome.ui.BlueprintCard xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginHorizontal="12dp"
     android:layout_marginVertical="6dp"
-    app:cardBackgroundColor="@color/surface"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="1dp"
-    app:strokeWidth="0dp"
-    app:strokeColor="@color/primary"
-    app:rippleColor="@color/primary">
+    android:background="@color/surface"
+    android:elevation="1dp">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -34,8 +30,8 @@
                 android:id="@+id/tripName"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
-                android:textStyle="bold"
+                android:fontFamily="@font/barlow_condensed"
+                android:textSize="18sp"
                 android:textColor="@color/on_surface"
                 tools:text="10.08.2026 12:30" />
 
@@ -52,11 +48,12 @@
                 android:id="@+id/currentBadge"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/bg_tag_accent"
+                android:letterSpacing="0.08"
                 android:text="@string/label_current_trip"
                 android:textColor="@color/primary"
-                android:textSize="12sp"
-                android:textStyle="bold"
+                android:textSize="11sp"
                 android:visibility="gone"
                 tools:visibility="visible" />
         </LinearLayout>
@@ -73,4 +70,4 @@
 
     </LinearLayout>
 
-</com.google.android.material.card.MaterialCardView>
+</com.waypoint.gohome.ui.BlueprintCard>

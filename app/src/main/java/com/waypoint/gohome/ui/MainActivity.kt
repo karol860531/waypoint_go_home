@@ -60,6 +60,7 @@ import com.waypoint.gohome.history.TripHistoryActivity
 import com.waypoint.gohome.location.CompassSensor
 import com.waypoint.gohome.location.LocationTrackingService
 import com.waypoint.gohome.location.RoutingClient
+import com.waypoint.gohome.location.SafetyTrackerService
 import com.waypoint.gohome.location.RoutingResult
 import com.waypoint.gohome.sun.SunInfoActivity
 import java.io.File
@@ -131,6 +132,24 @@ class MainActivity : AppCompatActivity() {
 
     private val notificationPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { startRecording() }
+
+    private val smsPermissionLauncher =
+        registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            val prefs = getSharedPreferences(SafetyTrackerService.PREFS_NAME, Context.MODE_PRIVATE)
+            if (granted) {
+                startSafetyTrackerService()
+                toast(
+                    getString(
+                        R.string.msg_safety_tracker_enabled,
+                        prefs.getInt(SafetyTrackerService.KEY_INTERVAL_MINUTES, SafetyTrackerService.DEFAULT_INTERVAL_MINUTES),
+                        prefs.getString(SafetyTrackerService.KEY_PHONE, "") ?: ""
+                    )
+                )
+            } else {
+                toast(getString(R.string.msg_sms_permission_required))
+                prefs.edit().putBoolean(SafetyTrackerService.KEY_ENABLED, false).apply()
+            }
+        }
 
     private val exportGpxLauncher =
         registerForActivityResult(ActivityResultContracts.CreateDocument("application/gpx+xml")) { uri ->
@@ -815,6 +834,81 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun showSafetyTrackerDialog() {
+        val prefs = getSharedPreferences(SafetyTrackerService.PREFS_NAME, Context.MODE_PRIVATE)
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val pad = (16 * resources.displayMetrics.density).toInt()
+            setPadding(pad, pad, pad, 0)
+        }
+        val checkBox = CheckBox(this).apply {
+            text = getString(R.string.menu_safety_tracker)
+            isChecked = prefs.getBoolean(SafetyTrackerService.KEY_ENABLED, false)
+        }
+        val phoneInput = TextInputEditText(this).apply {
+            inputType = InputType.TYPE_CLASS_PHONE
+            setText(prefs.getString(SafetyTrackerService.KEY_PHONE, ""))
+        }
+        val phoneLayout = TextInputLayout(this).apply {
+            hint = getString(R.string.hint_safety_tracker_phone)
+            addView(phoneInput)
+        }
+        val intervalInput = TextInputEditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER
+            setText(prefs.getInt(SafetyTrackerService.KEY_INTERVAL_MINUTES, SafetyTrackerService.DEFAULT_INTERVAL_MINUTES).toString())
+        }
+        val intervalLayout = TextInputLayout(this).apply {
+            hint = getString(R.string.hint_safety_tracker_interval)
+            addView(intervalInput)
+        }
+        container.addView(checkBox)
+        container.addView(phoneLayout)
+        container.addView(intervalLayout)
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.dialog_safety_tracker_title)
+            .setView(container)
+            .setPositiveButton(android.R.string.ok) { _, _ ->
+                val phone = phoneInput.text.toString().trim()
+                val interval = (intervalInput.text.toString().toIntOrNull() ?: SafetyTrackerService.DEFAULT_INTERVAL_MINUTES)
+                    .coerceAtLeast(5)
+                val enable = checkBox.isChecked
+
+                if (enable && phone.isEmpty()) {
+                    toast(getString(R.string.msg_safety_tracker_phone_required))
+                    return@setPositiveButton
+                }
+
+                prefs.edit()
+                    .putBoolean(SafetyTrackerService.KEY_ENABLED, enable)
+                    .putString(SafetyTrackerService.KEY_PHONE, phone)
+                    .putInt(SafetyTrackerService.KEY_INTERVAL_MINUTES, interval)
+                    .apply()
+
+                if (enable) {
+                    if (hasSmsPermission()) {
+                        stopService(Intent(this, SafetyTrackerService::class.java))
+                        startSafetyTrackerService()
+                        toast(getString(R.string.msg_safety_tracker_enabled, interval, phone))
+                    } else {
+                        smsPermissionLauncher.launch(Manifest.permission.SEND_SMS)
+                    }
+                } else {
+                    stopService(Intent(this, SafetyTrackerService::class.java))
+                    toast(getString(R.string.msg_safety_tracker_disabled))
+                }
+            }
+            .setNegativeButton(R.string.menu_cancel, null)
+            .show()
+    }
+
+    private fun hasSmsPermission() =
+        ContextCompat.checkSelfPermission(this, Manifest.permission.SEND_SMS) == PackageManager.PERMISSION_GRANTED
+
+    private fun startSafetyTrackerService() {
+        ContextCompat.startForegroundService(this, Intent(this, SafetyTrackerService::class.java))
+    }
+
     private fun showAutoWaypointDialog() {
         val prefs = getSharedPreferences(LocationTrackingService.PREFS_NAME, Context.MODE_PRIVATE)
         val container = LinearLayout(this).apply {
@@ -1212,6 +1306,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_elevation_profile -> {
                 showElevationProfile()
+                return true
+            }
+            R.id.action_safety_tracker -> {
+                showSafetyTrackerDialog()
                 return true
             }
             R.id.action_auto_waypoint -> {

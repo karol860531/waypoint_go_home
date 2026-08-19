@@ -16,6 +16,7 @@
 
     <string name="msg_location_unavailable">Nie udało się pobrać lokalizacji</string>
     <string name="msg_permission_required">Aplikacja potrzebuje dostępu do lokalizacji</string>
+    <string name="msg_sms_permission_required">Aplikacja potrzebuje uprawnienia do wysyłania SMS-ów, żeby włączyć tracker</string>
     <string name="msg_background_permission_rationale">Aby rysować trasę również przy zablokowanym ekranie, zezwól na dostęp do lokalizacji "Zawsze" na następnym ekranie</string>
     <string name="msg_no_waypoints">Brak zapisanych waypointów — najpierw zaznacz pozycję i dodaj punkty</string>
     <string name="msg_start_already_set">Punkt startowy już ustawiony</string>
@@ -54,8 +55,20 @@
     <string name="menu_offline_map">Pobierz mapę offline</string>
     <string name="menu_elevation_profile">Profil wysokości</string>
     <string name="menu_auto_waypoint">Auto-waypoint</string>
+    <string name="menu_safety_tracker">Tracker bezpieczeństwa</string>
 
     <string name="dialog_auto_waypoint_title">Automatyczne waypointy</string>
+
+    <string name="dialog_safety_tracker_title">Tracker bezpieczeństwa</string>
+    <string name="hint_safety_tracker_phone">Numer telefonu zaufanej osoby</string>
+    <string name="hint_safety_tracker_interval">Odstęp w minutach (min. 5)</string>
+    <string name="msg_safety_tracker_phone_required">Podaj numer telefonu, żeby włączyć tracker</string>
+    <string name="msg_safety_tracker_enabled">Tracker włączony — SMS co %1$d min do %2$s</string>
+    <string name="msg_safety_tracker_disabled">Tracker bezpieczeństwa wyłączony</string>
+    <string name="safety_tracker_sms_template">[Waypoint Go Home] Automatyczna aktualizacja pozycji (%1$s): %2$s</string>
+    <string name="safety_tracker_notification_title">Tracker bezpieczeństwa aktywny</string>
+    <string name="safety_tracker_notification_text">SMS z pozycją co %1$d min do %2$s</string>
+    <string name="safety_tracker_channel_name">Tracker bezpieczeństwa</string>
     <string name="dialog_auto_waypoint_distance_hint">Dystans w metrach</string>
     <string name="msg_auto_waypoint_enabled">Auto-waypoint włączony (co %1$d m)</string>
     <string name="msg_auto_waypoint_disabled">Auto-waypoint wyłączony</string>

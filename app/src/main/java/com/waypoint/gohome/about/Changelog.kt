@@ -10,6 +10,14 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.13.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Tracker bezpieczeństwa: cyklicznie wysyła SMS z pozycją do jednego, wcześniej ustawionego numeru (Menu → Narzędzia → Tracker bezpieczeństwa)",
+                "Bez własnego serwera i bez wystawiania adresu IP — działa wyłącznie przez SMS, zawsze widoczny w powiadomieniach"
+            )
+        ),
+        ChangelogEntry(
             version = "1.12.0",
             date = "2026-08-19",
             changes = listOf(

@@ -42,6 +42,9 @@
             <item
                 android:id="@+id/action_elevation_profile"
                 android:title="@string/menu_elevation_profile" />
+            <item
+                android:id="@+id/action_safety_tracker"
+                android:title="@string/menu_safety_tracker" />
         </menu>
     </item>
 

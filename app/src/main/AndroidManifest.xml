@@ -14,6 +14,7 @@
     <uses-permission android:name="android.permission.REQUEST_IGNORE_BATTERY_OPTIMIZATIONS" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera.any" android:required="false" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <queries>
         <package android:name="com.whatsapp" />
@@ -70,6 +71,11 @@
 
         <service
             android:name=".location.LocationTrackingService"
+            android:exported="false"
+            android:foregroundServiceType="location" />
+
+        <service
+            android:name=".location.SafetyTrackerService"
             android:exported="false"
             android:foregroundServiceType="location" />
 

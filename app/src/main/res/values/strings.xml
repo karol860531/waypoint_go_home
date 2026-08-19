@@ -32,6 +32,7 @@
 
     <string name="menu_set_as_target">Ustaw jako cel powrotu</string>
     <string name="menu_delete_waypoint">Usuń waypoint</string>
+    <string name="menu_waypoint_details">Szczegóły</string>
     <string name="menu_cancel">Anuluj</string>
     <string name="menu_add_photo">Dodaj zdjęcie</string>
     <string name="menu_retake_photo">Zmień zdjęcie</string>
@@ -133,6 +134,7 @@
     <string name="label_longitude">Długość: %1$.6f°</string>
     <string name="label_altitude">Wysokość: %1$.0f m n.p.m.</string>
     <string name="label_altitude_unavailable">Wysokość: niedostępna</string>
+    <string name="label_recorded_at">Zapisano: %1$s</string>
     <string name="label_accuracy">Dokładność GPS: ±%1$.0f m</string>
     <string name="msg_no_location">Lokalizacja jeszcze niedostępna — poczekaj chwilę</string>
 

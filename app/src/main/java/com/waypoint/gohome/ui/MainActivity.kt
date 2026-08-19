@@ -477,6 +477,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun showWaypointDialog(waypoint: Waypoint) {
         val actions = mutableListOf<Pair<String, () -> Unit>>()
+        actions.add(getString(R.string.menu_waypoint_details) to { showWaypointDetailsDialog(waypoint) })
         actions.add(getString(R.string.menu_set_as_target) to {
             viewModel.enterReturnMode(targetWaypointId = waypoint.id)
             toast(getString(R.string.msg_target_set))
@@ -987,6 +988,26 @@ class MainActivity : AppCompatActivity() {
         }
         MaterialAlertDialogBuilder(this)
             .setTitle(R.string.title_current_position)
+            .setMessage(message)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
+    }
+
+    private fun showWaypointDetailsDialog(waypoint: Waypoint) {
+        val message = buildString {
+            appendLine(String.format(Locale.US, getString(R.string.label_latitude), waypoint.latitude))
+            appendLine(String.format(Locale.US, getString(R.string.label_longitude), waypoint.longitude))
+            val altitude = waypoint.altitude
+            if (altitude != null) {
+                appendLine(String.format(Locale.US, getString(R.string.label_altitude), altitude))
+            } else {
+                appendLine(getString(R.string.label_altitude_unavailable))
+            }
+            val recordedAt = SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl", "PL")).format(java.util.Date(waypoint.timestamp))
+            append(getString(R.string.label_recorded_at, recordedAt))
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(waypointLabel(waypoint))
             .setMessage(message)
             .setPositiveButton(android.R.string.ok, null)
             .show()

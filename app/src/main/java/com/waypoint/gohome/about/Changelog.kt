@@ -10,6 +10,13 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.12.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Szczegóły waypointu: współrzędne, wysokość i data zapisu (dialog waypointu → „Szczegóły”)"
+            )
+        ),
+        ChangelogEntry(
             version = "1.11.0",
             date = "2026-08-19",
             changes = listOf(

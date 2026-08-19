@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Governs Auto Backup / adb backup on API 26-30 (API 31+ uses data_extraction_rules.xml
+  instead). The trip database encodes GPS history, including the start point of every trip —
+  for a "go home" navigation app that's very likely the user's home address — and waypoint
+  photos, so both are excluded from backup rather than being copied off-device.
+-->
+<full-backup-content>
+    <exclude domain="database" path="waypoint_go_home.db" />
+    <exclude domain="file" path="photos/" />
+</full-backup-content>

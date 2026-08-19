@@ -5,16 +5,32 @@
     <color name="primary">#2E7D32</color>
     <color name="primary_dark">#1B5E20</color>
     <color name="on_primary">#FFFFFF</color>
+    <color name="primary_container">#C8E6C9</color>
+    <color name="on_primary_container">#002106</color>
 
     <color name="secondary">#FF7043</color>
     <color name="on_secondary">#FFFFFF</color>
+    <color name="secondary_container">#FFDBCF</color>
+    <color name="on_secondary_container">#3A0B00</color>
+
+    <color name="tertiary">#1E88E5</color>
+    <color name="on_tertiary">#FFFFFF</color>
+    <color name="tertiary_container">#D2E4FF</color>
+    <color name="on_tertiary_container">#001C38</color>
+
+    <color name="error">#B3261E</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="error_container">#F9DEDC</color>
+    <color name="on_error_container">#410E0B</color>
 
     <color name="surface">#FFFFFF</color>
     <color name="surface_variant">#EEF1EC</color>
     <color name="background">#F5F5F0</color>
+    <color name="on_background">#1B1B1B</color>
     <color name="on_surface">#1B1B1B</color>
     <color name="on_surface_variant">#5F6368</color>
     <color name="outline">#E0E0E0</color>
+    <color name="outline_variant">#EDEFEE</color>
 
     <color name="track_line">#FF1E88E5</color>
     <color name="marker_start">#FF2E7D32</color>

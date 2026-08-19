@@ -75,6 +75,8 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.overlay.Marker
 import org.osmdroid.views.overlay.Polyline
 
+private const val KEY_ROAD_ROUTING_CONSENT = "road_routing_consent_given"
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
@@ -249,7 +251,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         binding.checkRoadRouting.setOnCheckedChangeListener { _, checked ->
-            if (checked) refreshRoadRoute() else clearRoadRoute()
+            if (checked) onRoadRoutingEnabled() else clearRoadRoute()
         }
 
         binding.btnLocateMe.setOnClickListener {
@@ -530,6 +532,24 @@ class MainActivity : AppCompatActivity() {
         }
         val bearing = location.bearingTo(targetLocation)
         binding.navArrow.rotation = ((bearing - lastHeading) + 360) % 360
+    }
+
+    private fun onRoadRoutingEnabled() {
+        val prefs = getSharedPreferences(LocationTrackingService.PREFS_NAME, Context.MODE_PRIVATE)
+        if (prefs.getBoolean(KEY_ROAD_ROUTING_CONSENT, false)) {
+            refreshRoadRoute()
+            return
+        }
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.title_road_routing_consent)
+            .setMessage(R.string.msg_road_routing_consent)
+            .setPositiveButton(R.string.btn_enable) { _, _ ->
+                prefs.edit().putBoolean(KEY_ROAD_ROUTING_CONSENT, true).apply()
+                refreshRoadRoute()
+            }
+            .setNegativeButton(R.string.menu_cancel) { _, _ -> binding.checkRoadRouting.isChecked = false }
+            .setOnCancelListener { binding.checkRoadRouting.isChecked = false }
+            .show()
     }
 
     private fun refreshRoadRoute() {

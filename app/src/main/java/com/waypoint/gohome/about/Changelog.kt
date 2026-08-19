@@ -10,6 +10,22 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.9.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Historia tras i zdjęcia wykluczone z automatycznego backupu w chmurze / adb backup",
+                "Ostrzeżenie przed pierwszym włączeniem trasy po drogach o wysyłaniu pozycji do zewnętrznego serwera OSRM"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.8.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Pełny zestaw kolorów Material 3 (primary/secondary/tertiary + warianty container, error) w jasnym i ciemnym motywie",
+                "Bez zmian w wyglądzie mapy — kafelki bez filtrów kolorów"
+            )
+        ),
+        ChangelogEntry(
             version = "1.7.0",
             date = "2026-08-17",
             changes = listOf(

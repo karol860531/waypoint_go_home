@@ -85,6 +85,9 @@
     <string name="btn_skip">Pomiń</string>
 
     <string name="label_routing_toggle">Trasa po drogach</string>
+    <string name="title_road_routing_consent">Wysyłanie lokalizacji na zewnętrzny serwer</string>
+    <string name="msg_road_routing_consent">Ta opcja wysyła Twoją aktualną pozycję i cel powrotu do publicznego serwera OSRM (router.project-osrm.org) w celu wyznaczenia trasy po drogach. Dane opuszczają Twoje urządzenie i nie są objęte kontrolą tej aplikacji. Pozostałe funkcje (nawigacja kompasem, zapis trasy) działają w pełni offline.</string>
+    <string name="btn_enable">Włącz</string>
     <string name="msg_routing_no_connection">Brak połączenia z internetem — nie można pobrać trasy po drogach</string>
     <string name="msg_routing_no_route">Nie znaleziono trasy po drogach w pobliżu tych punktów (usługa obsługuje tylko drogi dla samochodów, nie ścieżki leśne)</string>
     <string name="msg_routing_server_error">Serwer tras jest chwilowo niedostępny, spróbuj ponownie później</string>

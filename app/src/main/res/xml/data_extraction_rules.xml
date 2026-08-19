@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  API 31+ backup/transfer rules. Cloud backup (Google account, reachable via adb backup and
+  account compromise) excludes the trip database and photos — same rationale as
+  backup_rules.xml. Device-transfer (the official same-user, physically-present phone swap
+  wizard) is left untouched so a genuine phone upgrade doesn't lose trip history.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="database" path="waypoint_go_home.db" />
+        <exclude domain="file" path="photos/" />
+    </cloud-backup>
+</data-extraction-rules>

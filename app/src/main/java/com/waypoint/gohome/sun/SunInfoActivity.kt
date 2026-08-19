@@ -89,6 +89,7 @@ class SunInfoActivity : AppCompatActivity() {
         val sunriseAz = SunCalculator.getPosition(times.sunrise, lat, lon).azimuthDeg
         val sunsetAz = SunCalculator.getPosition(times.sunset, lat, lon).azimuthDeg
         binding.sunCompass.update(sunriseAz, sunsetAz, position.azimuthDeg, position.altitudeDeg)
+        binding.sunArc.update(now, times.solarNoon, position.altitudeDeg)
     }
 
     private fun countdownMessage(now: Long, times: SunCalculator.SunTimes): String {

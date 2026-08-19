@@ -11,8 +11,8 @@ android {
         applicationId = "com.waypoint.gohome"
         minSdk = 26
         targetSdk = 34
-        versionCode = 14
-        versionName = "1.13.0"
+        versionCode = 17
+        versionName = "1.16.0"
     }
 
     buildTypes {

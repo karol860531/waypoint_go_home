@@ -10,6 +10,28 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.16.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Ekran Słońce: animowana grafika pokazująca aktualną pozycję słońca względem horyzontu (obok istniejącego kompasu słonecznego)"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.15.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Ekran startowy przy uruchamianiu aplikacji z logiem, nazwą i numerem wersji"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.14.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Nowa ikona aplikacji dopasowana do kolorów appki (pineska z domkiem)",
+                "Skrócona nazwa na ekranie głównym: „WayHome” zamiast „Waypoint Go Home”, żeby się mieściła"
+            )
+        ),
+        ChangelogEntry(
             version = "1.13.0",
             date = "2026-08-19",
             changes = listOf(

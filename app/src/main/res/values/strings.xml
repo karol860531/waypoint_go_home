@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">Waypoint Go Home</string>
+    <string name="app_name">WayHome</string>
+    <string name="splash_tagline">Zapisz trasę. Wróć do domu.</string>
+    <string name="label_splash_version">wersja %1$s</string>
 
     <string name="btn_mark_position">Zaznacz pozycję</string>
     <string name="btn_add_waypoint">Dodaj waypoint</string>
@@ -11,7 +13,7 @@
     <string name="btn_new_trip">Nowa trasa</string>
 
     <string name="notification_channel_name">Śledzenie trasy</string>
-    <string name="notification_title">Waypoint Go Home</string>
+    <string name="notification_title">WayHome</string>
     <string name="notification_text">Nagrywanie trasy w toku…</string>
 
     <string name="msg_location_unavailable">Nie udało się pobrać lokalizacji</string>
@@ -65,7 +67,7 @@
     <string name="msg_safety_tracker_phone_required">Podaj numer telefonu, żeby włączyć tracker</string>
     <string name="msg_safety_tracker_enabled">Tracker włączony — SMS co %1$d min do %2$s</string>
     <string name="msg_safety_tracker_disabled">Tracker bezpieczeństwa wyłączony</string>
-    <string name="safety_tracker_sms_template">[Waypoint Go Home] Automatyczna aktualizacja pozycji (%1$s): %2$s</string>
+    <string name="safety_tracker_sms_template">[WayHome] Automatyczna aktualizacja pozycji (%1$s): %2$s</string>
     <string name="safety_tracker_notification_title">Tracker bezpieczeństwa aktywny</string>
     <string name="safety_tracker_notification_text">SMS z pozycją co %1$d min do %2$s</string>
     <string name="safety_tracker_channel_name">Tracker bezpieczeństwa</string>
@@ -135,7 +137,7 @@
     <string name="share_target_whatsapp">WhatsApp</string>
     <string name="share_target_signal">Signal</string>
     <string name="share_target_sms">SMS</string>
-    <string name="share_message_template">Moja aktualna lokalizacja: %1$s\nPokonany dystans: %2$s\n\nWysłano z aplikacji Waypoint Go Home</string>
+    <string name="share_message_template">Moja aktualna lokalizacja: %1$s\nPokonany dystans: %2$s\n\nWysłano z aplikacji WayHome</string>
     <string name="msg_no_location_to_share">Brak aktualnej lokalizacji do udostępnienia</string>
     <string name="msg_app_not_installed">%1$s nie jest zainstalowany(a)</string>
 
@@ -164,6 +166,7 @@
     <string name="legend_sunset">Zachód</string>
     <string name="legend_sun_now">Słońce teraz</string>
     <string name="hint_sun_compass_radius">Im bliżej środka, tym wyżej słońce nad horyzontem</string>
+    <string name="title_sun_arc">Pozycja słońca nad horyzontem</string>
     <string name="countdown_to_dawn">Świt za %1$s</string>
     <string name="countdown_to_sunrise">Wschód słońca za %1$s</string>
     <string name="countdown_to_dusk">Zmierzch za %1$s</string>

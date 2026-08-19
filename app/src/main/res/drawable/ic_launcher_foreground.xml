@@ -3,10 +3,16 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+    <!-- map pin -->
     <path
         android:fillColor="#FFFFFF"
         android:pathData="M54,20 C40,20 30,31 30,45 C30,63 54,88 54,88 C54,88 78,63 78,45 C78,31 68,20 54,20 Z" />
+    <!-- house glyph: roof -->
     <path
-        android:fillColor="#3F51B5"
-        android:pathData="M54,36 A10,10 0 1 0 54,56 A10,10 0 1 0 54,36 Z" />
+        android:fillColor="#FF7043"
+        android:pathData="M42,46 L54,33 L66,46 Z" />
+    <!-- house glyph: base -->
+    <path
+        android:fillColor="#FF7043"
+        android:pathData="M45,45 L63,45 L63,60 L45,60 Z" />
 </vector>

@@ -10,6 +10,20 @@ data class ChangelogEntry(
 object Changelog {
     val entries: List<ChangelogEntry> = listOf(
         ChangelogEntry(
+            version = "1.11.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Podgląd waypointu na żywym obrazie z kamery, z naniesionym kierunkiem i dystansem (dostępne z dialogu każdego waypointu → „Pokaż kierunek w kamerze”)"
+            )
+        ),
+        ChangelogEntry(
+            version = "1.10.0",
+            date = "2026-08-19",
+            changes = listOf(
+                "Nawigacja do ręcznie wpisanych współrzędnych (Menu → Trasa → Prowadź do współrzędnych)"
+            )
+        ),
+        ChangelogEntry(
             version = "1.9.0",
             date = "2026-08-19",
             changes = listOf(

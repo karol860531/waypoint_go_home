@@ -26,6 +26,7 @@
     <string name="label_end">Koniec</string>
     <string name="label_waypoint">Waypoint %1$d</string>
     <string name="label_target_prefix">Cel: %1$s</string>
+    <string name="label_custom_coordinates">Współrzędne (%1$.5f, %2$.5f)</string>
     <string name="label_distance_m">%1$d m</string>
     <string name="label_distance_km">%1$.1f km</string>
 
@@ -36,6 +37,9 @@
     <string name="menu_retake_photo">Zmień zdjęcie</string>
     <string name="menu_view_photo">Zobacz zdjęcie</string>
     <string name="msg_camera_unavailable">Nie znaleziono aplikacji aparatu</string>
+    <string name="menu_view_in_camera">Pokaż kierunek w kamerze</string>
+    <string name="title_waypoint_ar">Podgląd waypointu</string>
+    <string name="msg_camera_permission_required">Potrzebny dostęp do aparatu, aby pokazać kierunek na żywym obrazie</string>
     <string name="msg_photo_load_failed">Nie udało się wczytać zdjęcia</string>
 
     <string name="menu_trip_history">Historia tras</string>
@@ -104,6 +108,11 @@
     <string name="title_choose_target">Dokąd wrócić?</string>
 
     <string name="menu_group_trip">Trasa</string>
+    <string name="menu_navigate_to_coordinates">Prowadź do współrzędnych</string>
+    <string name="hint_latitude">Szerokość geograficzna (np. 52.2297)</string>
+    <string name="hint_longitude">Długość geograficzna (np. 21.0122)</string>
+    <string name="btn_start_navigation">Rozpocznij nawigację</string>
+    <string name="msg_invalid_coordinates">Nieprawidłowe współrzędne (szerokość -90…90, długość -180…180)</string>
     <string name="menu_group_tools">Narzędzia</string>
     <string name="menu_group_info">Informacje</string>
 

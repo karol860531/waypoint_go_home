@@ -45,6 +45,7 @@ import com.google.android.gms.location.Priority
 import com.google.android.gms.tasks.CancellationTokenSource
 import com.waypoint.gohome.R
 import com.waypoint.gohome.about.ChangelogActivity
+import com.waypoint.gohome.ar.WaypointArActivity
 import com.waypoint.gohome.compass.CompassActivity
 import com.waypoint.gohome.data.GeoUtils
 import com.waypoint.gohome.data.GpxExporter
@@ -96,6 +97,7 @@ class MainActivity : AppCompatActivity() {
     private var pendingPhotoUri: Uri? = null
 
     private lateinit var currentLocationMarker: Marker
+    private lateinit var coordinateTargetMarker: Marker
     private lateinit var trackPolyline: Polyline
     private lateinit var routePolyline: Polyline
     private val waypointMarkers = mutableListOf<Marker>()
@@ -213,6 +215,12 @@ class MainActivity : AppCompatActivity() {
             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_CENTER)
             title = getString(R.string.label_start)
         }
+
+        coordinateTargetMarker = Marker(binding.mapView).apply {
+            icon = ContextCompat.getDrawable(this@MainActivity, R.drawable.ic_marker_target)
+            setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
+            title = getString(R.string.menu_navigate_to_coordinates)
+        }
     }
 
     private fun setupButtons() {
@@ -272,10 +280,16 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 launch { viewModel.returnMode.collect { updateReturnPanelVisibility(it) } }
-                launch { viewModel.returnRoute.collect { updateReturnLabel() } }
+                launch {
+                    viewModel.returnRoute.collect {
+                        updateReturnLabel()
+                        updateCoordinateTargetMarker()
+                    }
+                }
                 launch {
                     viewModel.returnIndex.collect {
                         updateReturnLabel()
+                        updateCoordinateTargetMarker()
                         if (binding.checkRoadRouting.isChecked) refreshRoadRoute() else clearRoadRoute()
                     }
                 }
@@ -311,6 +325,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun waypointLabel(waypoint: Waypoint): String = when {
+        waypoint.id == MainViewModel.COORDINATE_TARGET_ID ->
+            String.format(Locale.US, getString(R.string.label_custom_coordinates), waypoint.latitude, waypoint.longitude)
         waypoint.isEnd -> getString(R.string.label_end)
         waypoint.isStart -> getString(R.string.label_start)
         !waypoint.label.isNullOrBlank() -> waypoint.label
@@ -420,12 +436,52 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun promptNavigateToCoordinates() {
+        val latInput = TextInputEditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+        }
+        val latLayout = TextInputLayout(this).apply {
+            hint = getString(R.string.hint_latitude)
+            addView(latInput)
+        }
+        val lonInput = TextInputEditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER or InputType.TYPE_NUMBER_FLAG_DECIMAL or InputType.TYPE_NUMBER_FLAG_SIGNED
+        }
+        val lonLayout = TextInputLayout(this).apply {
+            hint = getString(R.string.hint_longitude)
+            addView(lonInput)
+        }
+        val container = LinearLayout(this).apply {
+            orientation = LinearLayout.VERTICAL
+            val padH = (16 * resources.displayMetrics.density).toInt()
+            setPadding(padH, 0, padH, 0)
+            addView(latLayout)
+            addView(lonLayout)
+        }
+
+        MaterialAlertDialogBuilder(this)
+            .setTitle(R.string.menu_navigate_to_coordinates)
+            .setView(container)
+            .setPositiveButton(R.string.btn_start_navigation) { _, _ ->
+                val lat = latInput.text.toString().replace(',', '.').toDoubleOrNull()
+                val lon = lonInput.text.toString().replace(',', '.').toDoubleOrNull()
+                if (lat == null || lon == null || lat !in -90.0..90.0 || lon !in -180.0..180.0) {
+                    toast(getString(R.string.msg_invalid_coordinates))
+                } else {
+                    viewModel.navigateToCoordinates(lat, lon)
+                }
+            }
+            .setNegativeButton(R.string.menu_cancel, null)
+            .show()
+    }
+
     private fun showWaypointDialog(waypoint: Waypoint) {
         val actions = mutableListOf<Pair<String, () -> Unit>>()
         actions.add(getString(R.string.menu_set_as_target) to {
             viewModel.enterReturnMode(targetWaypointId = waypoint.id)
             toast(getString(R.string.msg_target_set))
         })
+        actions.add(getString(R.string.menu_view_in_camera) to { openWaypointAr(waypoint) })
         val photoUri = waypoint.photoUri
         if (photoUri != null) {
             actions.add(getString(R.string.menu_view_photo) to { showPhoto(photoUri) })
@@ -506,8 +562,7 @@ class MainActivity : AppCompatActivity() {
         val route = viewModel.returnRoute.value
         val index = viewModel.returnIndex.value
         val target = route.getOrNull(index) ?: return
-        val label = if (target.isStart) getString(R.string.label_start) else getString(R.string.label_waypoint, target.sequence)
-        binding.navTargetLabel.text = getString(R.string.label_target_prefix, label)
+        binding.navTargetLabel.text = getString(R.string.label_target_prefix, waypointLabel(target))
 
         val location = lastLocation ?: return
         val results = FloatArray(1)
@@ -518,6 +573,20 @@ class MainActivity : AppCompatActivity() {
         } else {
             getString(R.string.label_distance_m, distance.roundToInt())
         }
+    }
+
+    private fun updateCoordinateTargetMarker() {
+        val route = viewModel.returnRoute.value
+        val target = route.getOrNull(viewModel.returnIndex.value)
+        if (viewModel.returnMode.value && target?.id == MainViewModel.COORDINATE_TARGET_ID) {
+            coordinateTargetMarker.position = GeoPoint(target.latitude, target.longitude)
+            if (coordinateTargetMarker !in binding.mapView.overlays) {
+                binding.mapView.overlays.add(coordinateTargetMarker)
+            }
+        } else {
+            binding.mapView.overlays.remove(coordinateTargetMarker)
+        }
+        binding.mapView.invalidate()
     }
 
     private fun updateNavArrow() {
@@ -923,6 +992,15 @@ class MainActivity : AppCompatActivity() {
             .show()
     }
 
+    private fun openWaypointAr(waypoint: Waypoint) {
+        val intent = Intent(this, WaypointArActivity::class.java).apply {
+            putExtra(WaypointArActivity.EXTRA_LAT, waypoint.latitude)
+            putExtra(WaypointArActivity.EXTRA_LON, waypoint.longitude)
+            putExtra(WaypointArActivity.EXTRA_LABEL, waypointLabel(waypoint))
+        }
+        startActivity(intent)
+    }
+
     private fun openSunInfo() {
         val location = lastLocation
         if (location == null) {
@@ -1101,6 +1179,10 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.action_import_gpx -> {
                 importGpxLauncher.launch(arrayOf("*/*"))
+                return true
+            }
+            R.id.action_navigate_to_coordinates -> {
+                promptNavigateToCoordinates()
                 return true
             }
             R.id.action_offline_map -> {

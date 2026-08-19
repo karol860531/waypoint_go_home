@@ -84,6 +84,26 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         _returnIndex.value = 0
     }
 
+    /** Navigates directly to an arbitrary, unsaved lat/lon — not tied to any waypoint or trip. */
+    fun navigateToCoordinates(lat: Double, lon: Double) {
+        val target = Waypoint(
+            id = COORDINATE_TARGET_ID,
+            tripId = currentTripId.value,
+            latitude = lat,
+            longitude = lon,
+            altitude = null,
+            sequence = -1,
+            isStart = false,
+            isEnd = false,
+            label = null,
+            photoUri = null,
+            timestamp = System.currentTimeMillis()
+        )
+        _returnRoute.value = listOf(target)
+        _returnIndex.value = 0
+        _returnMode.value = true
+    }
+
     enum class ArrivalStatus { NONE, ADVANCED, FINISHED }
 
     /** Call with the current fix; advances to the next leg once within [thresholdMeters] of the target. */
@@ -132,5 +152,10 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
         track: List<Triple<Double, Double, Double?>>
     ) = viewModelScope.launch {
         repository.importTrip("Import ${repository.defaultTripName()}", waypoints, track)
+    }
+
+    companion object {
+        /** Sentinel [Waypoint.id] marking a synthetic, unsaved navigation target (see [navigateToCoordinates]). */
+        const val COORDINATE_TARGET_ID = -1L
     }
 }

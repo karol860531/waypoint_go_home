@@ -11,8 +11,8 @@ android {
         applicationId = "com.waypoint.gohome"
         minSdk = 26
         targetSdk = 34
-        versionCode = 10
-        versionName = "1.9.0"
+        versionCode = 12
+        versionName = "1.11.0"
     }
 
     buildTypes {
@@ -55,4 +55,10 @@ dependencies {
 
     // Fused location provider (Google Play services location, no API key required)
     implementation("com.google.android.gms:play-services-location:21.3.0")
+
+    // CameraX, for the live camera waypoint-direction preview
+    implementation("androidx.camera:camera-core:1.3.4")
+    implementation("androidx.camera:camera-camera2:1.3.4")
+    implementation("androidx.camera:camera-lifecycle:1.3.4")
+    implementation("androidx.camera:camera-view:1.3.4")
 }
